@@ -184,7 +184,7 @@ class TestAuth(TestCase):
         self.assertEqual(signup_request.status_code, 200)
 
         login_data = {
-            "username": self.data_factory.name(),
+            "username": new_user["username"],
             "password": password,
         }
 
