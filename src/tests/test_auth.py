@@ -13,6 +13,18 @@ class TestAuth(TestCase):
         self.data_factory = Faker()
         self.client = app.test_client()
 
+        self.password = "MyPassword2022*"
+        self.new_user = {
+            "username": self.data_factory.name(),
+            "email": self.data_factory.email(),
+            "password1": self.password,
+            "password2": self.password
+        }
+
+        signup_request = self.client.post("/api/auth/signup",
+                                                   data=json.dumps(self.new_user),
+                                                   headers={'Content-Type': 'application/json'})
+
     def test_succes_signup(self):
         password = "MyPassword2022*"
         new_user = {
@@ -169,23 +181,9 @@ class TestAuth(TestCase):
     
 
     def test_succes_login(self):
-        password = "MyPassword2022*"
-        new_user = {
-            "username": self.data_factory.name(),
-            "email": self.data_factory.email(),
-            "password1": password,
-            "password2": password
-        }
-
-        signup_request = self.client.post("/api/auth/signup",
-                                                   data=json.dumps(new_user),
-                                                   headers={'Content-Type': 'application/json'})
-
-        self.assertEqual(signup_request.status_code, 200)
-
         login_data = {
-            "username": new_user["username"],
-            "password": password,
+            "username": self.new_user["username"],
+            "password": self.password,
         }
 
         login_request = self.client.post("/api/auth/login",
