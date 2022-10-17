@@ -8,6 +8,7 @@ from src.modelos.modelos import User, db, Task
 from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
+from flask_jwt_extended import create_access_token, jwt_required
 
 def validate_email(email):
         pattern = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
@@ -116,3 +117,22 @@ class Auth(Resource):
         db.session.add(nuevoUsuario)
         db.session.commit()
         return {"resultado": "OK", "mensaje": "Usuario creado exitosamente"}, 200
+
+class AuthLogin(Resource):    
+    def post(self):
+        try:
+            username = request.json["username"]
+        except KeyError as e:
+            return {"resultado": "ERROR", "mensaje": "Debe proporcionar un nombre de usuario"}, 400
+
+        try:
+            password = request.json["password"]
+        except KeyError as e:
+            return {"resultado": "ERROR", "mensaje": "Debe proporcionar una contraseña"}, 400
+
+        user = User.query.filter(User.username == request.json["username"], User.password == request.json["password"]).first()
+        if(user is None):
+            return {"resultado": "ERROR", "mensaje": "Credenciales inválidas"}, 403
+
+        token_de_acceso = create_access_token(identity=user.id)
+        return {"resultado": "OK", "mensaje": "Inicio de sesión exitoso", "token": token_de_acceso}, 200
