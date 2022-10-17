@@ -9,6 +9,12 @@ from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
 
+def validate_email(email):
+        pattern = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
+        if re.match(pattern,email):
+            return True
+        return False
+
 class Tasks(Resource):
     def post(self):
         now = datetime.now()
@@ -31,6 +37,9 @@ class Tasks(Resource):
 
 class Auth(Resource):    
     def post(self):
+        if(validate_email(request.json["email"]) != True):
+            return {"resultado": "ERROR", "mensaje": "El correo electrónico suministrado no es válido"}, 400
+
         if request.json["password1"] != request.json["password2"]:
             return {"resultado": "ERROR", "mensaje": "La clave de confirmación no coincide"}, 400
 
