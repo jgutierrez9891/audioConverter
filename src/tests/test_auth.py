@@ -124,6 +124,30 @@ class TestAuth(TestCase):
         signup_response = json.loads(signup_request.get_data())
 
         self.assertEquals(signup_response["mensaje"], "El correo electrónico suministrado no es válido")
+    
+    def test_error_signup_weak_password(self):
+        password = self.data_factory.word()
+        new_user = {
+            "username": self.data_factory.name(),
+            "email": self.data_factory.email(),
+            "password1": password,
+            "password2": password
+        }
+
+        signup_request = self.client.post("/auth/signup",
+                                                   data=json.dumps(new_user),
+                                                   headers={'Content-Type': 'application/json'})
+
+        self.assertEqual(signup_request.status_code, 400)
+        signup_response = json.loads(signup_request.get_data())
+
+        self.assertEquals(signup_response["mensaje"], "La clave suministrada no cumple criterios mínimos. Por favor suministre una clave \n1%"+
+        "con las siguientes características: \n1%"+
+        "8 o más caracteres \n1%"+
+        "1 o más digitos \n1%"+
+        "1 o más simbolos \n1%"+
+        "1 o más letras mayúsculas \n1%"+
+        "1 o más letras minúsculas")
 
 
     def tearDown(self) -> None:
