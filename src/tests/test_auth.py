@@ -22,7 +22,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request = self.client.post("/auth/signup",
+        signup_request = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -37,7 +37,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request = self.client.post("/auth/signup",
+        signup_request = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -50,7 +50,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request2 = self.client.post("/auth/signup",
+        signup_request2 = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user2),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -68,7 +68,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request = self.client.post("/auth/signup",
+        signup_request = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -81,7 +81,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request2 = self.client.post("/auth/signup",
+        signup_request2 = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user2),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -98,7 +98,7 @@ class TestAuth(TestCase):
             "password2": "MyPassword2023*"
         }
 
-        signup_request = self.client.post("/auth/signup",
+        signup_request = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -116,7 +116,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request = self.client.post("/auth/signup",
+        signup_request = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -134,7 +134,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request = self.client.post("/auth/signup",
+        signup_request = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -157,7 +157,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request = self.client.post("/auth/signup",
+        signup_request = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -177,7 +177,7 @@ class TestAuth(TestCase):
             "password2": password
         }
 
-        signup_request = self.client.post("/auth/signup",
+        signup_request = self.client.post("/api/auth/signup",
                                                    data=json.dumps(new_user),
                                                    headers={'Content-Type': 'application/json'})
 
@@ -188,7 +188,7 @@ class TestAuth(TestCase):
             "password": password,
         }
 
-        login_request = self.client.post("/auth/login",
+        login_request = self.client.post("/api/auth/login",
                                                    data=json.dumps(login_data),
                                                    headers={'Content-Type': 'application/json'})
 
