@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from src.servicios.servicios import Tasks
+from src.servicios.servicios import Auth, Tasks
 from src.modelos.modelos import db
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
@@ -22,4 +22,5 @@ db.create_all()
 
 api = Api(app)
 api.add_resource(Tasks, '/tasks')
+api.add_resource(Auth, '/auth/signup')
 
