@@ -149,6 +149,22 @@ class TestAuth(TestCase):
         "1 o más letras mayúsculas \n1%"+
         "1 o más letras minúsculas")
 
+    def test_error_signup_no_username(self):
+        password = "MyPassword2022*"
+        new_user = {
+            "email": self.data_factory.email(),
+            "password1": password,
+            "password2": password
+        }
+
+        signup_request = self.client.post("/auth/signup",
+                                                   data=json.dumps(new_user),
+                                                   headers={'Content-Type': 'application/json'})
+
+        self.assertEqual(signup_request.status_code, 400)
+        signup_response = json.loads(signup_request.get_data())
+
+        self.assertEquals(signup_response["mensaje"], "Debe proporcionar un nombre de usuario")
 
     def tearDown(self) -> None:
         users = User.query.all()

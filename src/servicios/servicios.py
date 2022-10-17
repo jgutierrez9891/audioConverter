@@ -69,6 +69,26 @@ class Tasks(Resource):
 
 class Auth(Resource):    
     def post(self):
+        try:
+            email = request.json["email"]
+        except KeyError as e:
+            return {"resultado": "ERROR", "mensaje": "Debe proporcionar un correo electrónico"}, 400
+
+        try:
+            email = request.json["username"]
+        except KeyError as e:
+            return {"resultado": "ERROR", "mensaje": "Debe proporcionar un nombre de usuario"}, 400
+
+        try:
+            email = request.json["password1"]
+        except KeyError as e:
+            return {"resultado": "ERROR", "mensaje": "Debe proporcionar una contraseña"}, 400
+
+        try:
+            email = request.json["password2"]
+        except KeyError as e:
+            return {"resultado": "ERROR", "mensaje": "Debe proporcionar la confirmación de la contraseña"}, 400
+        
         if(validate_email(request.json["email"]) != True):
             return {"resultado": "ERROR", "mensaje": "El correo electrónico suministrado no es válido"}, 400
 
