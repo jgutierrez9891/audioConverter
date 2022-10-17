@@ -144,8 +144,8 @@ class TestAuth(TestCase):
         self.assertEquals(signup_response["mensaje"], "La clave suministrada no cumple criterios mínimos. Por favor suministre una clave \n1%"+
         "con las siguientes características: \n1%"+
         "8 o más caracteres \n1%"+
-        "1 o más digitos \n1%"+
-        "1 o más simbolos \n1%"+
+        "1 o más dígitos \n1%"+
+        "1 o más símbolos \n1%"+
         "1 o más letras mayúsculas \n1%"+
         "1 o más letras minúsculas")
 
