@@ -14,7 +14,7 @@ class TestAuth(TestCase):
         self.client = app.test_client()
 
     def test_succes_signup(self):
-        password = self.data_factory.word()
+        password = "MyPassword2022*"
         new_user = {
             "username": self.data_factory.name(),
             "email": self.data_factory.email(),
@@ -29,7 +29,7 @@ class TestAuth(TestCase):
         self.assertEqual(signup_request.status_code, 200)
 
     def test_error_signup_existing_user(self):
-        password = self.data_factory.word()
+        password = "MyPassword2022*"
         new_user = {
             "username": self.data_factory.name(),
             "email": self.data_factory.email(),
@@ -60,7 +60,7 @@ class TestAuth(TestCase):
         self.assertEquals(signup_response2["mensaje"], "El usuario seleccionado ya existe")
 
     def test_error_signup_existing_email(self):
-        password = self.data_factory.word()
+        password = "MyPassword2022*"
         new_user = {
             "username": self.data_factory.name(),
             "email": self.data_factory.email(),
@@ -94,8 +94,8 @@ class TestAuth(TestCase):
         new_user = {
             "username": self.data_factory.name(),
             "email": self.data_factory.email(),
-            "password1": self.data_factory.word(),
-            "password2": self.data_factory.word()
+            "password1": "MyPassword2022*",
+            "password2": "MyPassword2023*"
         }
 
         signup_request = self.client.post("/auth/signup",
@@ -108,7 +108,7 @@ class TestAuth(TestCase):
         self.assertEquals(signup_response["mensaje"], "La clave de confirmación no coincide")
     
     def test_error_signup_invalid_email(self):
-        password = self.data_factory.word()
+        password = "MyPassword2022*"
         new_user = {
             "username": self.data_factory.name(),
             "email": self.data_factory.name(),

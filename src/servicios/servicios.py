@@ -15,6 +15,38 @@ def validate_email(email):
             return True
         return False
 
+def password_check(password):
+    """
+    Verify the strength of 'password'
+    Returns a dict indicating the wrong criteria
+    A password is considered strong if:
+        8 characters length or more
+        1 digit or more
+        1 symbol or more
+        1 uppercase letter or more
+        1 lowercase letter or more
+    """
+
+    # calculating the length
+    length_error = len(password) < 8
+
+    # searching for digits
+    digit_error = re.search(r"\d", password) is None
+
+    # searching for uppercase
+    uppercase_error = re.search(r"[A-Z]", password) is None
+
+    # searching for lowercase
+    lowercase_error = re.search(r"[a-z]", password) is None
+
+    # searching for symbols
+    symbol_error = re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None
+
+    # overall result
+    password_ok = not ( length_error or digit_error or uppercase_error or lowercase_error or symbol_error )
+
+    return password_ok
+
 class Tasks(Resource):
     def post(self):
         now = datetime.now()
@@ -42,6 +74,15 @@ class Auth(Resource):
 
         if request.json["password1"] != request.json["password2"]:
             return {"resultado": "ERROR", "mensaje": "La clave de confirmación no coincide"}, 400
+
+        if(password_check(request.json["password1"]) != True):
+            return {"resultado": "ERROR", "mensaje": "La clave suministrada no cumple criterios mínimos. Por favor suministre una clave \n1%"+
+        "con las siguientes características: \n1%"+
+        "8 o más caracteres \n1%"+
+        "1 o más digitos \n1%"+
+        "1 o más simbolos \n1%"+
+        "1 o más letras mayúsculas \n1%"+
+        "1 o más letras minúsculas"}, 400
 
         userTmpUsername = User.query.filter(User.username == request.json["username"]).first()
         if(userTmpUsername is not None):
