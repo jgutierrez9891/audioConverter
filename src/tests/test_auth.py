@@ -41,25 +41,11 @@ class TestAuth(TestCase):
         self.assertEqual(signup_request.status_code, 200)
 
     def test_error_signup_existing_user(self):
-        password = "MyPassword2022*"
-        new_user = {
-            "username": self.data_factory.name(),
-            "email": self.data_factory.email(),
-            "password1": password,
-            "password2": password
-        }
-
-        signup_request = self.client.post("/api/auth/signup",
-                                                   data=json.dumps(new_user),
-                                                   headers={'Content-Type': 'application/json'})
-
-        self.assertEqual(signup_request.status_code, 200)
-
         new_user2 = {
-            "username": new_user["username"],
+            "username": self.new_user["username"],
             "email": self.data_factory.email(),
-            "password1": password,
-            "password2": password
+            "password1": self.password,
+            "password2": self.password
         }
 
         signup_request2 = self.client.post("/api/auth/signup",
@@ -72,25 +58,11 @@ class TestAuth(TestCase):
         self.assertEqual(signup_response2["mensaje"], "El usuario seleccionado ya existe")
 
     def test_error_signup_existing_email(self):
-        password = "MyPassword2022*"
-        new_user = {
-            "username": self.data_factory.name(),
-            "email": self.data_factory.email(),
-            "password1": password,
-            "password2": password
-        }
-
-        signup_request = self.client.post("/api/auth/signup",
-                                                   data=json.dumps(new_user),
-                                                   headers={'Content-Type': 'application/json'})
-
-        self.assertEqual(signup_request.status_code, 200)
-
         new_user2 = {
             "username": self.data_factory.name(),
-            "email": new_user["email"],
-            "password1": password,
-            "password2": password
+            "email": self.new_user["email"],
+            "password1": self.password,
+            "password2": self.password
         }
 
         signup_request2 = self.client.post("/api/auth/signup",
