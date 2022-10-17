@@ -192,6 +192,20 @@ class TestAuth(TestCase):
         login_response = json.loads(login_request.get_data())
 
         self.assertEqual(login_response["mensaje"], "Debe proporcionar una contraseña")
+    
+    def test_error_no_username(self):
+        login_data = {
+            "password": self.data_factory.name()
+        }
+
+        login_request = self.client.post("/api/auth/login",
+                                                   data=json.dumps(login_data),
+                                                   headers={'Content-Type': 'application/json'})
+
+        self.assertEqual(login_request.status_code, 400)
+        login_response = json.loads(login_request.get_data())
+
+        self.assertEqual(login_response["mensaje"], "Debe proporcionar un nombre de usuario")
 
     def tearDown(self) -> None:
         users = User.query.all()
