@@ -166,6 +166,37 @@ class TestAuth(TestCase):
 
         self.assertEquals(signup_response["mensaje"], "Debe proporcionar un nombre de usuario")
 
+    
+
+    def test_succes_login(self):
+        password = "MyPassword2022*"
+        new_user = {
+            "username": self.data_factory.name(),
+            "email": self.data_factory.email(),
+            "password1": password,
+            "password2": password
+        }
+
+        signup_request = self.client.post("/auth/signup",
+                                                   data=json.dumps(new_user),
+                                                   headers={'Content-Type': 'application/json'})
+
+        self.assertEqual(signup_request.status_code, 200)
+
+        login_data = {
+            "username": self.data_factory.name(),
+            "password": password,
+        }
+
+        login_request = self.client.post("/auth/login",
+                                                   data=json.dumps(login_data),
+                                                   headers={'Content-Type': 'application/json'})
+
+        self.assertEqual(login_request.status_code, 200)
+        login_response = json.loads(login_request.get_data())
+
+        self.assertIsNotNone(login_response["token"])
+
     def tearDown(self) -> None:
         users = User.query.all()
         for item in users:
