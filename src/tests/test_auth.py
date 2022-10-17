@@ -166,6 +166,18 @@ class TestAuth(TestCase):
         login_response = json.loads(login_request.get_data())
 
         self.assertIsNotNone(login_response["token"])
+    
+    def test_error_login(self):
+        login_data = {
+            "username": self.data_factory.name(),
+            "password": self.data_factory.word(),
+        }
+
+        login_request = self.client.post("/api/auth/login",
+                                                   data=json.dumps(login_data),
+                                                   headers={'Content-Type': 'application/json'})
+
+        self.assertEqual(login_request.status_code, 403)
 
     def tearDown(self) -> None:
         users = User.query.all()
