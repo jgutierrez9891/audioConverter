@@ -57,7 +57,7 @@ class TestAuth(TestCase):
         signup_response2 = json.loads(signup_request2.get_data())
 
         self.assertEqual(signup_request2.status_code, 400)
-        self.assertEquals(signup_response2["mensaje"], "El usuario seleccionado ya existe")
+        self.assertEqual(signup_response2["mensaje"], "El usuario seleccionado ya existe")
 
     def test_error_signup_existing_email(self):
         password = "MyPassword2022*"
@@ -88,7 +88,7 @@ class TestAuth(TestCase):
         signup_response2 = json.loads(signup_request2.get_data())
 
         self.assertEqual(signup_request2.status_code, 400)
-        self.assertEquals(signup_response2["mensaje"], "El correo electrónico suministrado ya existe")
+        self.assertEqual(signup_response2["mensaje"], "El correo electrónico suministrado ya existe")
 
     def test_error_signup_confirmation_password(self):
         new_user = {
@@ -105,7 +105,7 @@ class TestAuth(TestCase):
         self.assertEqual(signup_request.status_code, 400)
         signup_response = json.loads(signup_request.get_data())
 
-        self.assertEquals(signup_response["mensaje"], "La clave de confirmación no coincide")
+        self.assertEqual(signup_response["mensaje"], "La clave de confirmación no coincide")
     
     def test_error_signup_invalid_email(self):
         password = "MyPassword2022*"
@@ -123,7 +123,7 @@ class TestAuth(TestCase):
         self.assertEqual(signup_request.status_code, 400)
         signup_response = json.loads(signup_request.get_data())
 
-        self.assertEquals(signup_response["mensaje"], "El correo electrónico suministrado no es válido")
+        self.assertEqual(signup_response["mensaje"], "El correo electrónico suministrado no es válido")
     
     def test_error_signup_weak_password(self):
         password = self.data_factory.word()
@@ -141,7 +141,7 @@ class TestAuth(TestCase):
         self.assertEqual(signup_request.status_code, 400)
         signup_response = json.loads(signup_request.get_data())
 
-        self.assertEquals(signup_response["mensaje"], "La clave suministrada no cumple criterios mínimos. Por favor suministre una clave \n1%"+
+        self.assertEqual(signup_response["mensaje"], "La clave suministrada no cumple criterios mínimos. Por favor suministre una clave \n1%"+
         "con las siguientes características: \n1%"+
         "8 o más caracteres \n1%"+
         "1 o más dígitos \n1%"+
@@ -164,7 +164,7 @@ class TestAuth(TestCase):
         self.assertEqual(signup_request.status_code, 400)
         signup_response = json.loads(signup_request.get_data())
 
-        self.assertEquals(signup_response["mensaje"], "Debe proporcionar un nombre de usuario")
+        self.assertEqual(signup_response["mensaje"], "Debe proporcionar un nombre de usuario")
 
     
 
