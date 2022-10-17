@@ -178,6 +178,20 @@ class TestAuth(TestCase):
                                                    headers={'Content-Type': 'application/json'})
 
         self.assertEqual(login_request.status_code, 403)
+    
+    def test_error_no_password(self):
+        login_data = {
+            "username": self.data_factory.name()
+        }
+
+        login_request = self.client.post("/api/auth/login",
+                                                   data=json.dumps(login_data),
+                                                   headers={'Content-Type': 'application/json'})
+
+        self.assertEqual(login_request.status_code, 400)
+        login_response = json.loads(login_request.get_data())
+
+        self.assertEqual(login_response["mensaje"], "Debe proporcionar una contraseña")
 
     def tearDown(self) -> None:
         users = User.query.all()
