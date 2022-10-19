@@ -1,11 +1,11 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from src.servicios.servicios import Auth, AuthLogin, Tasks
+from src.servicios.servicios import Auth, AuthLogin, TaskR, Tasks
 from src.modelos.modelos import db
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-UPLOAD_FOLDER = 'C:\\Users\\joal9\\Documents'
+UPLOAD_FOLDER = 'C:\\ruta'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -22,8 +22,9 @@ db.drop_all()
 db.create_all()
 
 api = Api(app)
-api.add_resource(Tasks, '/tasks')
+api.add_resource(Tasks, '/api/tasks')
 api.add_resource(Auth, '/api/auth/signup')
 api.add_resource(AuthLogin, '/api/auth/login')
+api.add_resource(TaskR, '/api/task/<userid>')
 
 jwt = JWTManager(app)
