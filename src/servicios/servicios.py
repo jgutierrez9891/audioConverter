@@ -67,6 +67,19 @@ class Tasks(Resource):
         db.session.add(nueva_tarea)
         db.session.commit()
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
+    
+class TaskR(Resource):
+    def get(self, userid):
+        print("userid: "+userid)
+        taskTmp = Task.query.filter(Task.id == userid).first()
+        if(taskTmp is not None):
+            return {"id": taskTmp.id,
+                    "fileName" : taskTmp.fileName,
+                    "newFormat" : taskTmp.newFormat,
+                    "timeStamp" : taskTmp.timeStamp.strftime('%m/%d/%Y'),
+                    "status" : taskTmp.status}
+        else:
+            return {"resultado": "ERROR", "mensaje": "No se encontro la tarea"}, 400
 
 class Auth(Resource):    
     def post(self):
