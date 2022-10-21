@@ -49,6 +49,8 @@ def password_check(password):
     return password_ok
 
 class Tasks(Resource):
+    
+    @jwt_required()
     def post(self):
         now = datetime.now()
         dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
@@ -57,10 +59,15 @@ class Tasks(Resource):
         file = request.files["nombreArchivo"]
         if file.filename == '':
             return 'Debe seleccionar un archivo de audio para ser convertido', 411
+        print (file.filename)
         if file and allowed_file(file.filename):
+            print (file.filename)
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             filepath = app.config['UPLOAD_FOLDER'] + "\\" + filename
+        else:
+            print ("Formato invalido" + file.filename)
+            return 'Ingrese un formato de archivo válido', 412
         print("El nombre del archivo es" + filename)
         nueva_tarea = Task(fileName = filepath, newFormat = request.values['nuevoFormato'], \
             timeStamp = dt_string, status = "uploaded")
@@ -69,6 +76,8 @@ class Tasks(Resource):
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
 class TaskR(Resource):
+
+    @jwt_required()
     def get(self, userid):
         print("userid: "+userid)
         taskTmp = Task.query.filter(Task.id == userid).first()
