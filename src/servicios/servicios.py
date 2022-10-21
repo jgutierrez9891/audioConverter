@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
 from flask_jwt_extended import create_access_token, jwt_required
+from src.publisher import publish_task_queue
 
 def validate_email(email):
         pattern = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
@@ -69,10 +70,15 @@ class Tasks(Resource):
             print ("Formato invalido" + file.filename)
             return 'Ingrese un formato de archivo válido', 412
         print("El nombre del archivo es" + filename)
-        nueva_tarea = Task(fileName = filepath, newFormat = request.values['nuevoFormato'], \
+        nuevoFormato = request.values['nuevoFormato']
+        nueva_tarea = Task(fileName = filepath, newFormat = nuevoFormato, \
             timeStamp = dt_string, status = "uploaded")
         db.session.add(nueva_tarea)
         db.session.commit()
+
+        #Se envía tarea a la cola
+        mensaje = {"filepath":filepath, "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
+        q = publish_task_queue(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
 class TaskR(Resource):

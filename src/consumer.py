@@ -1,11 +1,19 @@
-import pika, sys, os
+import pika, sys, os, json
 
 def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    try:
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host='localhost'))
+    except pika.exceptions.AMQPConnectionError:
+        print("Failed to connect to RabbitMQ service. Message wont be sent.")
+        return
+
     channel = connection.channel()
+    channel.queue_declare(queue='conversion_process', durable=True)
 
     def callback(ch, method, properties, body):
-        print(" [x] Received %r" % body.decode())
+        print(" [x] Received %r" % json.loads(body))
+        print("Done")
 
     channel.basic_consume(queue='conversion_process', on_message_callback=callback, auto_ack=True)
 
