@@ -70,11 +70,12 @@ class Tasks(Resource):
     def post(self):
         now = datetime.now()
         dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
+        id_usuario = request.values['id_usuario']
         if 'nombreArchivo' not in request.files:
-            return 'La petición no contiene el archivo', 410
+            return {"resultado": "ERROR", "mensaje": "La petición no contiene el archivo"}, 410
         file = request.files["nombreArchivo"]
         if file.filename == '':
-            return 'Debe seleccionar un archivo de audio para ser convertido', 411
+            return {"resultado": "ERROR", "mensaje": 'Debe seleccionar un archivo de audio para ser convertido'}, 411
         print (file.filename)
         if file and allowed_file(file.filename):
             print (file.filename)
@@ -83,11 +84,12 @@ class Tasks(Resource):
             filepath = app.config['UPLOAD_FOLDER'] + "\\" + filename
         else:
             print ("Formato invalido" + file.filename)
-            return 'Ingrese un formato de archivo válido', 412
-        print("El nombre del archivo es" + filename)
-        nuevoFormato = request.values['nuevoFormato']
-        nueva_tarea = Task(fileName = filepath, newFormat = nuevoFormato, \
-            timeStamp = dt_string, status = "uploaded")
+            return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
+        usuario = User.query.get(id_usuario)
+        if usuario is None:
+            return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
+        nueva_tarea = Task(fileName = filepath, newFormat = request.values['nuevoFormato'], \
+            timeStamp = dt_string, status = "uploaded", id_usuario = id_usuario)
         db.session.add(nueva_tarea)
         db.session.commit()
 
