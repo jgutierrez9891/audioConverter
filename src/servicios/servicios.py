@@ -2,16 +2,17 @@ from ast import Not
 import os
 import re
 import traceback
-from flask import request
+from flask import request, jsonify
 from datetime import datetime
 from flask_restful import Resource
 from src.modelos.modelos import User, db, Task
 from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from src.publisher import publish_task_queue
 from pydub import AudioSegment
+from sqlalchemy.sql import text
 
 def validate_email(email):
         pattern = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
@@ -51,13 +52,42 @@ def password_check(password):
 
     return password_ok
 
+def serialize(row):
+    return {
+        "id" : str(row.id),
+        "fileName" : row.fileName,
+        "newFormat" : row.newFormat,
+        "status" : row.status
+    } 
 class Tasks(Resource):
     
+    @jwt_required()
+    def get(self,order=0, maxel=0):
+        # current_user_id = request.json['id_usuario'] #for testing without JWT
+        current_user_id = get_jwt_identity()
+        order = int(order)
+        maxel = int(maxel)
+
+        if maxel>0:
+            if order==0:
+                tasksList = Task.query.filter_by(id_usuario=current_user_id).order_by(text('id')).limit(maxel).all()
+            else:
+                tasksList = Task.query.filter_by(id_usuario=current_user_id).order_by(text('id desc')).limit(maxel).all()
+        else:
+            if order==0:
+                tasksList = Task.query.filter_by(id_usuario=current_user_id).order_by(text('id')).all()
+            else:
+                tasksList = Task.query.filter_by(id_usuario=current_user_id).order_by(text('id desc')).all()
+
+        tasksResp =[serialize(x) for x in tasksList]
+        return jsonify({'tasks': tasksResp})
+
     @jwt_required()
     def post(self):
         now = datetime.now()
         dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
-        id_usuario = request.values['id_usuario']
+        # id_usuario = request.values['id_usuario'] #for testing without JWT
+        id_usuario = get_jwt_identity()
         if 'nombreArchivo' not in request.files:
             return {"resultado": "ERROR", "mensaje": "La petición no contiene el archivo"}, 410
         file = request.files["nombreArchivo"]
