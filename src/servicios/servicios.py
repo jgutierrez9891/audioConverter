@@ -200,39 +200,3 @@ class AuthLogin(Resource):
         return {"resultado": "OK", "mensaje": "Inicio de sesión exitoso", "token": token_de_acceso}, 200
     
     
-class Converter(Resource):
-    def post(self):
-        
-        print("location: "+request.json["location"])
-        location = request.json["location"]
-    
-        print("newFormat: "+request.json["nFormat"])
-        nFormat = request.json["nFormat"]
-        
-        print("locationNoFormat: "+location.split(".")[0])
-        locationNoFormat = location.split(".")[0]
-        
-        print("format: "+location.split(".")[1])
-        format = location.split(".")[1]
-        
-        try:
-            print(locationNoFormat+"."+nFormat)
-            if format == "mp3":
-                song = AudioSegment.from_mp3(location)
-                song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
-            else: 
-                if format == "ogg":
-                    song = AudioSegment.from_ogg(location)
-                    song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                    return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
-                else:
-                    if format == "wav":
-                        song = AudioSegment.from_wav(location)
-                        song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                        return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
-                    else:
-                        return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400
-        except Exception: 
-            {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
-            
