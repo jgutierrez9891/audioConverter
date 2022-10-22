@@ -2,14 +2,14 @@ from ast import Not
 import os
 import re
 import traceback
-from flask import request
+from flask import request, jsonify
 from datetime import datetime
 from flask_restful import Resource
 from src.modelos.modelos import User, db, Task
 from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from src.publisher import publish_task_queue
 from pydub import AudioSegment
 
@@ -51,8 +51,21 @@ def password_check(password):
 
     return password_ok
 
+def serialize(row):
+    return {
+        "id" : str(row.id),
+        "fileName" : row.fileName,
+        "newFormat" : row.newFormat,
+        "status" : row.status
+    } 
 class Tasks(Resource):
     
+    @jwt_required()
+    def get(self):
+        current_user_id = get_jwt_identity()
+        tasksResp =[serialize(x) for x in Task.query.all()]
+        return jsonify({'tasks': tasksResp})
+
     @jwt_required()
     def post(self):
         now = datetime.now()
