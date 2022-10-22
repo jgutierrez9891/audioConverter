@@ -71,7 +71,6 @@ class Tasks(Resource):
         else:
             print ("Formato invalido" + file.filename)
             return 'Ingrese un formato de archivo válido', 412
-        print("El nombre del archivo es" + filename)
         nuevoFormato = request.values['nuevoFormato']
         nueva_tarea = Task(fileName = filepath, newFormat = nuevoFormato, \
             timeStamp = dt_string, status = "uploaded")
