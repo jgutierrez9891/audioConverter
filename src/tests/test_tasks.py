@@ -94,8 +94,8 @@ class TestTasks(TestCase):
         self.assertEqual(solicitud_nueva_tarea.status_code, 412)
         tarea_creada = json.loads(solicitud_nueva_tarea.get_data())
         self.assertEqual(tarea_creada["mensaje"],"Ingrese un formato de archivo válido")
-
-    def test_create_task_invalid_id(self):
+    
+    def test_delete_task(self):
         login_data = {
             "username": self.new_user["username"],
             "password": self.password,
@@ -110,14 +110,19 @@ class TestTasks(TestCase):
 
         headers = {'Content-Type': 'application/json', "Authorization": "Bearer {}".format(login_response["token"])}
         
-        data = {"nuevoFormato": "mp3", "id_usuario" : "2"}
+        data = {"nuevoFormato": "mp3"}
         data['nombreArchivo'] = open('resources\David Guetta - Titanium.mp3' ,'rb')
         solicitud_nueva_tarea = self.client.post("/api/tasks", data = data, 
                             headers = headers, content_type='multipart/form-data')
 
-        self.assertEqual(solicitud_nueva_tarea.status_code, 409)
+        self.assertEqual(solicitud_nueva_tarea.status_code, 200)
         tarea_creada = json.loads(solicitud_nueva_tarea.get_data())
-        self.assertEqual(tarea_creada["mensaje"],"El id de usuario ingresado no existe")
+        self.assertEqual(tarea_creada["mensaje"],"Tarea creada exitosamente")
+
+        idTarea = tarea_creada["id"]
+        solicitud_eliminar_tarea = self.client.delete("/api/tasks/"+str(idTarea),  
+                            headers = headers, content_type='multipart/form-data')
+        self.assertEqual(solicitud_eliminar_tarea.status_code, 200)
 
     def tearDown(self) -> None:
         users = User.query.all()
