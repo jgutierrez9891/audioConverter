@@ -63,14 +63,14 @@ class Tasks(Resource):
     @jwt_required()
     def get(self):
         current_user_id = get_jwt_identity()
-        tasksResp =[serialize(x) for x in Task.query.all()]
+        tasksResp =[serialize(x) for x in Task.query.filter_by(id_usuario=current_user_id).all()]
         return jsonify({'tasks': tasksResp})
 
     @jwt_required()
     def post(self):
         now = datetime.now()
         dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
-        id_usuario = request.values['id_usuario']
+        id_usuario = get_jwt_identity()
         if 'nombreArchivo' not in request.files:
             return {"resultado": "ERROR", "mensaje": "La petición no contiene el archivo"}, 410
         file = request.files["nombreArchivo"]
