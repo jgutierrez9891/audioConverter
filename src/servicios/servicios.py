@@ -102,6 +102,15 @@ class TaskR(Resource):
     def delete(self, idTask):
         print("idTask: "+idTask)
         task = Task.query.get_or_404(idTask)
+        justFileName = task.fileName.split('.')[0]
+        destinationFormat = task.newFormat
+        print("justFileName: "+justFileName)
+        print("destinationFormat: "+destinationFormat)
+        destinationFileName = justFileName+"."+destinationFormat
+        print("destinationFileName: "+destinationFileName)
+
+        if(os.path.isfile(destinationFileName)):
+            os.remove(destinationFileName)
         db.session.delete(task)
         db.session.commit()
         return
