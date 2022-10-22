@@ -136,9 +136,9 @@ class Tasks(Resource):
 class TaskR(Resource):
 
     @jwt_required()
-    def get(self, userid):
-        print("userid: "+userid)
-        taskTmp = Task.query.filter(Task.id == userid).first()
+    def get(self, idTask):
+        print("idTask: "+idTask)
+        taskTmp = Task.query.filter(Task.id == idTask).first()
         if(taskTmp is not None):
             return {"id": taskTmp.id,
                     "fileName" : taskTmp.fileName,
@@ -147,6 +147,23 @@ class TaskR(Resource):
                     "status" : taskTmp.status}
         else:
             return {"resultado": "ERROR", "mensaje": "No se encontro la tarea"}, 400
+    
+    @jwt_required()
+    def delete(self, idTask):
+        print("idTask: "+idTask)
+        task = Task.query.get_or_404(idTask)
+        justFileName = task.fileName.split('.')[0]
+        destinationFormat = task.newFormat
+        print("justFileName: "+justFileName)
+        print("destinationFormat: "+destinationFormat)
+        destinationFileName = justFileName+"."+destinationFormat
+        print("destinationFileName: "+destinationFileName)
+
+        if(os.path.isfile(destinationFileName)):
+            os.remove(destinationFileName)
+        db.session.delete(task)
+        db.session.commit()
+        return
 
 class Auth(Resource):    
     def post(self):
