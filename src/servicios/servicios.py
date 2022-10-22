@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
 from flask_jwt_extended import create_access_token, jwt_required
+from src.publisher import publish_task_queue
 from pydub import AudioSegment
 
 def validate_email(email):
@@ -51,26 +52,42 @@ def password_check(password):
     return password_ok
 
 class Tasks(Resource):
+    
+    @jwt_required()
     def post(self):
         now = datetime.now()
         dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
+        id_usuario = request.values['id_usuario']
         if 'nombreArchivo' not in request.files:
-            return 'La petición no contiene el archivo', 410
+            return {"resultado": "ERROR", "mensaje": "La petición no contiene el archivo"}, 410
         file = request.files["nombreArchivo"]
         if file.filename == '':
-            return 'Debe seleccionar un archivo de audio para ser convertido', 411
+            return {"resultado": "ERROR", "mensaje": 'Debe seleccionar un archivo de audio para ser convertido'}, 411
+        print (file.filename)
         if file and allowed_file(file.filename):
+            print (file.filename)
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             filepath = app.config['UPLOAD_FOLDER'] + "\\" + filename
-        print("El nombre del archivo es" + filename)
+        else:
+            print ("Formato invalido" + file.filename)
+            return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
+        usuario = User.query.get(id_usuario)
+        if usuario is None:
+            return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
         nueva_tarea = Task(fileName = filepath, newFormat = request.values['nuevoFormato'], \
-            timeStamp = dt_string, status = "uploaded")
+            timeStamp = dt_string, status = "uploaded", id_usuario = id_usuario)
         db.session.add(nueva_tarea)
         db.session.commit()
+
+        #Se envía tarea a la cola
+        mensaje = {"filepath":filepath, "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
+        q = publish_task_queue(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
 class TaskR(Resource):
+
+    @jwt_required()
     def get(self, userid):
         print("userid: "+userid)
         taskTmp = Task.query.filter(Task.id == userid).first()
