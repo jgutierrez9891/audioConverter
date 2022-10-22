@@ -2,16 +2,17 @@ from ast import Not
 import os
 import re
 import traceback
-from flask import request
+from flask import request, jsonify
 from datetime import datetime
 from flask_restful import Resource
 from src.modelos.modelos import User, db, Task
 from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from src.publisher import publish_task_queue
 from pydub import AudioSegment
+from sqlalchemy.sql import text
 
 def validate_email(email):
         pattern = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
@@ -51,17 +52,47 @@ def password_check(password):
 
     return password_ok
 
+def serialize(row):
+    return {
+        "id" : str(row.id),
+        "fileName" : row.fileName,
+        "newFormat" : row.newFormat,
+        "status" : row.status
+    } 
 class Tasks(Resource):
     
+    @jwt_required()
+    def get(self,order=0, maxel=0):
+        # current_user_id = request.json['id_usuario'] #for testing without JWT
+        current_user_id = get_jwt_identity()
+        order = int(order)
+        maxel = int(maxel)
+
+        if maxel>0:
+            if order==0:
+                tasksList = Task.query.filter_by(id_usuario=current_user_id).order_by(text('id')).limit(maxel).all()
+            else:
+                tasksList = Task.query.filter_by(id_usuario=current_user_id).order_by(text('id desc')).limit(maxel).all()
+        else:
+            if order==0:
+                tasksList = Task.query.filter_by(id_usuario=current_user_id).order_by(text('id')).all()
+            else:
+                tasksList = Task.query.filter_by(id_usuario=current_user_id).order_by(text('id desc')).all()
+
+        tasksResp =[serialize(x) for x in tasksList]
+        return jsonify({'tasks': tasksResp})
+
     @jwt_required()
     def post(self):
         now = datetime.now()
         dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
+        # id_usuario = request.values['id_usuario'] #for testing without JWT
+        id_usuario = get_jwt_identity()
         if 'nombreArchivo' not in request.files:
-            return 'La petición no contiene el archivo', 410
+            return {"resultado": "ERROR", "mensaje": "La petición no contiene el archivo"}, 410
         file = request.files["nombreArchivo"]
         if file.filename == '':
-            return 'Debe seleccionar un archivo de audio para ser convertido', 411
+            return {"resultado": "ERROR", "mensaje": 'Debe seleccionar un archivo de audio para ser convertido'}, 411
         print (file.filename)
         if file and allowed_file(file.filename):
             print (file.filename)
@@ -70,11 +101,12 @@ class Tasks(Resource):
             filepath = app.config['UPLOAD_FOLDER'] + "\\" + filename
         else:
             print ("Formato invalido" + file.filename)
-            return 'Ingrese un formato de archivo válido', 412
-        print("El nombre del archivo es" + filename)
-        nuevoFormato = request.values['nuevoFormato']
-        nueva_tarea = Task(fileName = filepath, newFormat = nuevoFormato, \
-            timeStamp = dt_string, status = "uploaded")
+            return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
+        usuario = User.query.get(id_usuario)
+        if usuario is None:
+            return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
+        nueva_tarea = Task(fileName = filepath, newFormat = request.values['nuevoFormato'], \
+            timeStamp = dt_string, status = "uploaded", id_usuario = id_usuario)
         db.session.add(nueva_tarea)
         db.session.commit()
 
@@ -185,39 +217,3 @@ class AuthLogin(Resource):
         return {"resultado": "OK", "mensaje": "Inicio de sesión exitoso", "token": token_de_acceso}, 200
     
     
-class Converter(Resource):
-    def post(self):
-        
-        print("location: "+request.json["location"])
-        location = request.json["location"]
-    
-        print("newFormat: "+request.json["nFormat"])
-        nFormat = request.json["nFormat"]
-        
-        print("locationNoFormat: "+location.split(".")[0])
-        locationNoFormat = location.split(".")[0]
-        
-        print("format: "+location.split(".")[1])
-        format = location.split(".")[1]
-        
-        try:
-            print(locationNoFormat+"."+nFormat)
-            if format == "mp3":
-                song = AudioSegment.from_mp3(location)
-                song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
-            else: 
-                if format == "ogg":
-                    song = AudioSegment.from_ogg(location)
-                    song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                    return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
-                else:
-                    if format == "wav":
-                        song = AudioSegment.from_wav(location)
-                        song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                        return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
-                    else:
-                        return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400
-        except Exception: 
-            {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
-            
