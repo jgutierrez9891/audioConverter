@@ -1,4 +1,5 @@
 import pika, sys, os
+import requests
 
 def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
@@ -6,6 +7,8 @@ def main():
 
     def callback(ch, method, properties, body):
         print(" [x] Received %r" % body.decode())
+        x = requests.post ("http://127.0.0.1:5000/api/convert",json = body)
+        print(x)
 
     channel.basic_consume(queue='conversion_process', on_message_callback=callback, auto_ack=True)
 
