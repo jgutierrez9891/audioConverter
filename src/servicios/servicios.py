@@ -114,6 +114,24 @@ class Tasks(Resource):
         mensaje = {"filepath":filepath, "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
         q = publish_task_queue(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
+
+    @jwt_required()
+    def put(self, idtarea):
+        # id_usuario = request.values['id_usuario'] #for testing without JWT
+        id_usuario = get_jwt_identity()
+        usuario = User.query.get(id_usuario)
+
+        if usuario is None:
+            return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
+
+        tarea = Task.query.filter(Task.id == idtarea and Task.id_usuario==id_usuario).first()
+        tarea.newFormat = request.values['nuevoFormato']
+
+        db.session.commit()
+        #Se envía tarea a la cola
+        mensaje = {"filepath":tarea.fileName, "newFormat":request.values['nuevoFormato'], "id": tarea.id}
+        q = publish_task_queue(mensaje)
+        return {"mensaje": "Tarea actualizada exitosamente", "id": tarea.id, "nuevoFormato": tarea.newFormat}
     
 class TaskR(Resource):
 
