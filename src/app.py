@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from src.servicios.servicios import Auth, AuthLogin, TaskR, Tasks
+from src.servicios.servicios import Auth, AuthLogin, TaskR, Tasks, FilesR
+
 from src.modelos.modelos import db
 from pathlib import Path
 
@@ -27,5 +28,6 @@ api.add_resource(Tasks, '/api/tasks')
 api.add_resource(Auth, '/api/auth/signup')
 api.add_resource(AuthLogin, '/api/auth/login')
 api.add_resource(TaskR, '/api/tasks/<taskId>')
+api.add_resource(FilesR, '/api/files/<filename>')
 
 jwt = JWTManager(app)

@@ -2,7 +2,7 @@ from ast import Not
 import os
 import re
 import traceback
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from datetime import datetime
 from flask_restful import Resource
 from src.modelos.modelos import User, db, Task
@@ -242,5 +242,15 @@ class AuthLogin(Resource):
 
         token_de_acceso = create_access_token(identity=user.id)
         return {"resultado": "OK", "mensaje": "Inicio de sesión exitoso", "token": token_de_acceso}, 200
+
+class FilesR(Resource):   
+    @jwt_required()
+    def get(self, filename):
+        filepath = str (app.config['UPLOAD_FOLDER'] / filename)
+
+        try:
+            return send_file(filepath, attachment_filename=filename)
+        except:
+            return {"resultado": "ERROR", "mensaje": 'El archivo no existe'}, 409
     
     
