@@ -8,6 +8,8 @@ class Task(db.Model):
     newFormat = db.Column(db.String())
     timeStamp = db.Column(db.DateTime())
     status = db.Column(db.String())
+    conversionTimeStamp = db.Column(db.DateTime())
+    secondsTakedToStartConversion = db.Column(db.Integer)
     id_usuario = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class User(db.Model):

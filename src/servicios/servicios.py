@@ -155,12 +155,12 @@ class TaskR(Resource):
         #Se envía tarea a la cola
         mensaje = {"filepath":tarea.fileName, "newFormat":request.values['nuevoFormato'], "id": tarea.id}
         q = publish_task_queue(mensaje)
-        return {"mensaje": "Tarea actualizada exitosamente", "id": tarea.id, "nuevoFormato": tarea.newFormat}
+        return {"mensaje": "Tarea actualizada exitosamente", "id": tarea.id, "nuevoFormato": tarea.newFormat},200
     
     @jwt_required()
-    def delete(self, idTask):
-        print("idTask: "+idTask)
-        task = Task.query.get_or_404(idTask)
+    def delete(self, taskId):
+        print("idTask: "+taskId)
+        task = Task.query.get_or_404(taskId)
         justFileName = task.fileName.split('.')[0]
         destinationFormat = task.newFormat
         print("justFileName: "+justFileName)
@@ -172,7 +172,7 @@ class TaskR(Resource):
             os.remove(destinationFileName)
         db.session.delete(task)
         db.session.commit()
-        return
+        return {"mensaje": "Tarea eliminada exitosamente", "id": taskId},200
 
 class Auth(Resource):    
     def post(self):
