@@ -5,6 +5,7 @@ from faker.generator import random
 
 from src.app import app
 from src.modelos.modelos import User, Task, db
+from pathlib import Path
 
 class TestTasks(TestCase):
     def setUp(self):
@@ -63,7 +64,9 @@ class TestTasks(TestCase):
         headers = {'Content-Type': 'application/json', "Authorization": "Bearer {}".format(login_response["token"])}
         
         data = {"nuevoFormato": "mp3", "id_usuario" : "1"}
-        data['nombreArchivo'] = open('resources\David Guetta - Titanium.mp3' ,'rb')
+        resources_folder = Path("resources/")
+        file_to_open = resources_folder / "David Guetta - Titanium.mp3"
+        data['nombreArchivo'] = open(file_to_open, 'rb')
         solicitud_nueva_tarea = self.client.post("/api/tasks", data = data, 
                             headers = headers, content_type='multipart/form-data')
 
@@ -87,7 +90,9 @@ class TestTasks(TestCase):
         headers = {'Content-Type': 'application/json', "Authorization": "Bearer {}".format(login_response["token"])}
         
         data = {"nuevoFormato": "mp3", "id_usuario" : "1"}
-        data['nombreArchivo'] = open('resources\Archivo_texto.txt' ,'rb')
+        resources_folder = Path("resources/")
+        file_to_open = resources_folder / "Archivo_texto.txt"
+        data['nombreArchivo'] = open(file_to_open, 'rb')
         solicitud_nueva_tarea = self.client.post("/api/tasks", data = data, 
                             headers = headers, content_type='multipart/form-data')
 

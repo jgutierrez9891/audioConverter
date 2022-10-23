@@ -97,8 +97,9 @@ class Tasks(Resource):
         if file and allowed_file(file.filename):
             print (file.filename)
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            filepath = app.config['UPLOAD_FOLDER'] + "\\" + filename
+            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(app.config['UPLOAD_FOLDER'] / filename)
+            filepath = str (app.config['UPLOAD_FOLDER'] / filename)
         else:
             print ("Formato invalido" + file.filename)
             return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
