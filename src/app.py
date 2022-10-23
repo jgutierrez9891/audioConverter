@@ -7,7 +7,7 @@ from src.modelos.modelos import db
 from pathlib import Path
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-data_folder = Path("C:/ruta")
+data_folder = Path("/tmp/audios")
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = data_folder
