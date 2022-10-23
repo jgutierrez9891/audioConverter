@@ -1,6 +1,3 @@
-from ast import Not
-import os
-import re
 import traceback
 from flask import request
 from flask_restful import Resource
@@ -11,9 +8,9 @@ class sendEmail(Resource):
         try:
             yag = yagmail.SMTP("audioconverternotify@gmail.com","xykqcyzummcgdxbm")
             contents = [
-                "The task id "+str(request.json["idTask"])+" has been peformed" 
+                "The File: "+str(request.json["file"])+" has been converted" 
             ]
-            yag.send('d.chala@uniandes.edu.co', 'Notification Task # '+str(request.json["idTask"]), contents)
+            yag.send(request.json["email"], 'Your file Conversion is done!', contents)
             return {"mensaje": "Se Envio el mensaje correctamente"}, 200
         except Exception: 
             {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400

@@ -2,7 +2,9 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from pydub import AudioSegment
+from srcConverter.modelos.modelos import User, db, Task
 import requests
+import json
 
 
 class Converter(Resource):
@@ -10,7 +12,12 @@ class Converter(Resource):
         
         url = "http://127.0.0.1:4000/api/notify"
         
-        json = {"idTask":request.json["id"]}
+        
+        taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
+        print(taskTmp)
+        userTmp = User.query.filter(User.id == taskTmp.id_usuario).first()
+        
+        jsons = {"email":userTmp.email,"file":request.json["filepath"]}
         
         print("location: "+request.json["filepath"])
         location = request.json["filepath"]
@@ -26,20 +33,28 @@ class Converter(Resource):
             if format == "mp3":
                 song = AudioSegment.from_mp3(location)
                 song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                x = requests.post(url = url, json = json)
+                x = requests.post(url = url, json = jsons)
                 print(x)
+                taskTmp.status = "converted"
+                db.session.commit()
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             else: 
                 if format == "ogg":
                     song = AudioSegment.from_ogg(location)
                     song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                    x = requests.post(url = url, json = json)
+                    x = requests.post(url = url, json = jsons)
+                    print(x)
+                    taskTmp.status = "converted"
+                    db.session.commit()
                     return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
                 else:
                     if format == "wav":
                         song = AudioSegment.from_wav(location)
                         song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                        x = requests.post(url = url, json = json)
+                        x = requests.post(url = url, json = jsons)
+                        print(x)
+                        taskTmp.status = "converted"
+                        db.session.commit()
                         return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
                     else:
                         return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400

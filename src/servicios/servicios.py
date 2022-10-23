@@ -137,9 +137,9 @@ class Tasks(Resource):
 class TaskR(Resource):
 
     @jwt_required()
-    def get(self, idTask):
-        print("idTask: "+idTask)
-        taskTmp = Task.query.filter(Task.id == idTask).first()
+    def get(self, taskId):
+        print("userid: "+taskId)
+        taskTmp = Task.query.filter(Task.id == taskId).first()
         if(taskTmp is not None):
             return {"id": taskTmp.id,
                     "fileName" : taskTmp.fileName,

@@ -14,11 +14,13 @@ def main():
 
     def callback(ch, method, properties, body):
         print(" [x] Received %r" % body.decode())
-        x = requests.post ("http://127.0.0.1:5000/api/convert",json = body)
+        print(body.decode())
+        bodyAsJson = json.loads(body.decode())
+        x = requests.post (url = "http://127.0.0.1:5000/api/convert",json = bodyAsJson)
         print(x)
         print("Done")
 
-channel.basic_consume(queue='conversion_process', on_message_callback=callback, auto_ack=True)
+    channel.basic_consume(queue='conversion_process', on_message_callback=callback, auto_ack=True)
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
