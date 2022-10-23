@@ -20,3 +20,4 @@ psycopg2==2.9.4
 pydub==0.25.1
 yagmail==0.15.293
 requests
+pathlib==1.0.1

@@ -3,12 +3,13 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from src.servicios.servicios import Auth, AuthLogin, TaskR, Tasks
 from src.modelos.modelos import db
+from pathlib import Path
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-UPLOAD_FOLDER = 'C:\\ruta'
+data_folder = Path("C:/ruta")
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = data_folder
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/flask_db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
