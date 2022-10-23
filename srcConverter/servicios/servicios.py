@@ -4,17 +4,23 @@ from flask_restful import Resource
 from pydub import AudioSegment
 from srcConverter.modelos.modelos import User, db, Task
 import requests
-import json
+from datetime import datetime
 
 
 class Converter(Resource):
     def post(self):
         
+        now = datetime.now()
         url = "http://127.0.0.1:4000/api/notify"
         
-        
         taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
-        print(taskTmp)
+        taskTmp.conversionTimeStamp = now.strftime("%Y-%m-%d %H:%M:%S")
+        db.session.commit()
+        
+        print((taskTmp.conversionTimeStamp  - taskTmp.timeStamp).total_seconds())
+        taskTmp.secondsTakedToStartConversion = (taskTmp.conversionTimeStamp  - taskTmp.timeStamp).total_seconds()
+        db.session.commit()
+        
         userTmp = User.query.filter(User.id == taskTmp.id_usuario).first()
         
         jsons = {"email":userTmp.email,"file":request.json["filepath"]}
@@ -59,5 +65,9 @@ class Converter(Resource):
                     else:
                         return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400
         except Exception: 
-            {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
+            taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
+            taskTmp.conversionTimeStamp = ""
+            taskTmp.secondsTakedToStartConversion = ""
+            db.session.commit()
+            return {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
             
