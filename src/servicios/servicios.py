@@ -90,12 +90,12 @@ class Tasks(Resource):
         tasksResp =[serialize(x) for x in tasksList]
         return jsonify({'tasks': tasksResp})
 
-    @jwt_required()
+    # @jwt_required()
     def post(self):
         now = datetime.now()
         dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
-        # id_usuario = request.values['id_usuario'] #for testing without JWT
-        id_usuario = get_jwt_identity()
+        id_usuario = request.values['id_usuario'] #for testing without JWT
+        # id_usuario = get_jwt_identity()
         if 'nombreArchivo' not in request.files:
             return {"resultado": "ERROR", "mensaje": "La petición no contiene el archivo"}, 410
         file = request.files["nombreArchivo"]
@@ -139,23 +139,30 @@ class TaskR(Resource):
         else:
             return {"resultado": "ERROR", "mensaje": "No se encontro la tarea"}, 400
     
-    @jwt_required()
+    # @jwt_required()
     def put(self, taskId):
-        # id_usuario = request.values['id_usuario'] #for testing without JWT
-        id_usuario = get_jwt_identity()
+        id_usuario = request.values['id_usuario'] #for testing without JWT
+        # id_usuario = get_jwt_identity()
         usuario = User.query.get(id_usuario)
 
         if usuario is None:
             return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
 
         tarea = Task.query.filter(Task.id == taskId and Task.id_usuario==id_usuario).first()
-        tarea.newFormat = request.values['nuevoFormato']
+        destinationFormat = tarea.newFormat
+        justFileName = tarea.fileName.split('.')[0]
+        destinationFileName = justFileName+"."+destinationFormat
+        if tarea.status =="processed":
+            if(os.path.isfile(destinationFileName)):
+                os.remove(destinationFileName)
+        tarea.newFormat = request.values["nuevoFormato"]
+        tarea.status = "uploaded"
 
         db.session.commit()
         #Se envía tarea a la cola
         mensaje = {"filepath":tarea.fileName, "newFormat":request.values['nuevoFormato'], "id": tarea.id}
         q = publish_task_queue(mensaje)
-        return {"mensaje": "Tarea actualizada exitosamente", "id": tarea.id, "nuevoFormato": tarea.newFormat},200
+        return {"mensaje": "Tarea actualizada exitosamente", "tarea": serialize(tarea)},200
     
     @jwt_required()
     def delete(self, taskId):
