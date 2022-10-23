@@ -41,7 +41,7 @@ class Converter(Resource):
                 song.export(locationNoFormat+"."+nFormat, format=nFormat)
                 x = requests.post(url = url, json = jsons)
                 #print(x)
-                taskTmp.status = "converted"
+                taskTmp.status = "processed"
                 db.session.commit()
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             else: 
@@ -50,7 +50,7 @@ class Converter(Resource):
                     song.export(locationNoFormat+"."+nFormat, format=nFormat)
                     x = requests.post(url = url, json = jsons)
                     #print(x)
-                    taskTmp.status = "converted"
+                    taskTmp.status = "processed"
                     db.session.commit()
                     return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
                 else:
@@ -59,7 +59,7 @@ class Converter(Resource):
                         song.export(locationNoFormat+"."+nFormat, format=nFormat)
                         x = requests.post(url = url, json = jsons)
                         #print(x)
-                        taskTmp.status = "converted"
+                        taskTmp.status = "processed"
                         db.session.commit()
                         return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
                     else:
