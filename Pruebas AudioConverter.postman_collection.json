@@ -1,0 +1,1202 @@
+{
+	"info": {
+		"_postman_id": "71098033-1333-40ad-a370-c67ebe6a6d5b",
+		"name": "Pruebas AudioConverter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1648705"
+	},
+	"item": [
+		{
+			"name": "SingUp",
+			"item": [
+				{
+					"name": "Success",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"edelcozgran@hotmail.com\",\r\n    \"username\":\"chalatest\",\r\n    \"password1\":\"Chala0001_\",\r\n    \"password2\":\"Chala0001_\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Failed - INVALID EMAIL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"daachalabu@unal.edu.co\",\r\n    \"username\":\"chalatest\",\r\n    \"password1\":\"chala1\",\r\n    \"password2\":\"chala1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Failed - PASSWORDS DONT MATCH",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"edelcozgran@hotmail.com\",\r\n    \"username\":\"chalatest\",\r\n    \"password1\":\"chala1\",\r\n    \"password2\":\"chala2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Failed - PASSWORDS DOESNT MEET EREQUIREMENTS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"ampilasblo@hotmail.com\",\r\n    \"username\":\"chalatest2\",\r\n    \"password1\":\"chala1\",\r\n    \"password2\":\"chala1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LogIn",
+			"item": [
+				{
+					"name": "Success",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"chalatest\",\r\n    \"password\":\"Chala0001_\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Failed - USER DOES NOT EXIST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"chalatest2\",\r\n    \"password\":\"Chala0001_\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Failed - WRONG PASSWORD",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"chalatest\",\r\n    \"password\":\"Chala0001_22\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Standar",
+					"item": [
+						{
+							"name": "Success",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5NzYwNiwianRpIjoiODc2YTc1MTQtNjA2Zi00YzM0LWE5YjUtODEzMTRkODU0MjIzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDk3NjA2LCJleHAiOjE2NjY0OTg1MDZ9.fYI_W_HDQYdRijxFigXRYPlFKGk7qM74Nrvr_qLryNM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nombreArchivo",
+											"type": "file",
+											"src": "/C:/flor.mp3"
+										},
+										{
+											"key": "nuevoFormato",
+											"value": "wav",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - NO FILE",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ4NTQ5NywianRpIjoiYjExZjU2ZDMtNjQ0Yy00MjYxLWE2YjEtZDA2MjhmYzg4YzE1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDg1NDk3LCJleHAiOjE2NjY0ODYzOTd9.jMzwCxvVN9_p3jLiFwvHai3AcbrII-IIR05eYmD-INY",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nombreArchivo",
+											"type": "file",
+											"src": [],
+											"disabled": true
+										},
+										{
+											"key": "nuevoFormato",
+											"value": "wmv",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - NO FORMAT",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ4NTQ5NywianRpIjoiYjExZjU2ZDMtNjQ0Yy00MjYxLWE2YjEtZDA2MjhmYzg4YzE1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDg1NDk3LCJleHAiOjE2NjY0ODYzOTd9.jMzwCxvVN9_p3jLiFwvHai3AcbrII-IIR05eYmD-INY",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nombreArchivo",
+											"type": "file",
+											"src": "/E:/flor.mp3"
+										},
+										{
+											"key": "nuevoFormato",
+											"value": "wmv",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - NO FILE, NO FORMAT",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ4NTQ5NywianRpIjoiYjExZjU2ZDMtNjQ0Yy00MjYxLWE2YjEtZDA2MjhmYzg4YzE1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDg1NDk3LCJleHAiOjE2NjY0ODYzOTd9.jMzwCxvVN9_p3jLiFwvHai3AcbrII-IIR05eYmD-INY",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nombreArchivo",
+											"type": "file",
+											"src": "/E:/flor.mp3",
+											"disabled": true
+										},
+										{
+											"key": "nuevoFormato",
+											"value": "wmv",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GetTasks",
+					"item": [
+						{
+							"name": "Order",
+							"item": [
+								{
+									"name": "Success - ORDER IS 1",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MTMyMiwianRpIjoiZDMxOTc5YjMtOTI0NC00ZjQwLWI1ZDUtYjQ5ZmU1ZTQwYzUxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkxMzIyLCJleHAiOjE2NjY0OTIyMjJ9._J5jF6CIjRDxReZGL4QL4yf-5wnfG9Q5CspdqW8HwPY",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "nombreArchivo",
+													"type": "file",
+													"src": "/E:/flor.mp3"
+												},
+												{
+													"key": "nuevoFormato",
+													"value": "wmv",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:3000/api/tasks?order=1",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"tasks"
+											],
+											"query": [
+												{
+													"key": "order",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Success - ORDER IS 0",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MDExMywianRpIjoiZjY2NTY0YTYtNzhlZS00ZjgzLWEzOGQtMmM1Zjk4NzA0ZWUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkwMTEzLCJleHAiOjE2NjY0OTEwMTN9.eCVrAA0YbjqWq21L78rE00COlO7sJV8TvZp6Hzz7xmw",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "nombreArchivo",
+													"type": "file",
+													"src": "/E:/flor.mp3"
+												},
+												{
+													"key": "nuevoFormato",
+													"value": "wmv",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:3000/api/tasks?order=0",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"tasks"
+											],
+											"query": [
+												{
+													"key": "order",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Maxel",
+							"item": [
+								{
+									"name": "Success - MAXEL IS 0",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MDExMywianRpIjoiZjY2NTY0YTYtNzhlZS00ZjgzLWEzOGQtMmM1Zjk4NzA0ZWUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkwMTEzLCJleHAiOjE2NjY0OTEwMTN9.eCVrAA0YbjqWq21L78rE00COlO7sJV8TvZp6Hzz7xmw",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "nombreArchivo",
+													"type": "file",
+													"src": "/E:/flor.mp3"
+												},
+												{
+													"key": "nuevoFormato",
+													"value": "wmv",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:3000/api/tasks?maxel=0",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"tasks"
+											],
+											"query": [
+												{
+													"key": "maxel",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Success - MAXEL IS 5",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MDExMywianRpIjoiZjY2NTY0YTYtNzhlZS00ZjgzLWEzOGQtMmM1Zjk4NzA0ZWUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkwMTEzLCJleHAiOjE2NjY0OTEwMTN9.eCVrAA0YbjqWq21L78rE00COlO7sJV8TvZp6Hzz7xmw",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "nombreArchivo",
+													"type": "file",
+													"src": "/E:/flor.mp3"
+												},
+												{
+													"key": "nuevoFormato",
+													"value": "wmv",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "http://127.0.0.1:3000/api/tasks?maxel=5",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"tasks"
+											],
+											"query": [
+												{
+													"key": "maxel",
+													"value": "5"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Success",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MDExMywianRpIjoiZjY2NTY0YTYtNzhlZS00ZjgzLWEzOGQtMmM1Zjk4NzA0ZWUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkwMTEzLCJleHAiOjE2NjY0OTEwMTN9.eCVrAA0YbjqWq21L78rE00COlO7sJV8TvZp6Hzz7xmw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nombreArchivo",
+											"type": "file",
+											"src": "/E:/flor.mp3"
+										},
+										{
+											"key": "nuevoFormato",
+											"value": "wmv",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GetTaskById",
+					"item": [
+						{
+							"name": "Success",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MDExMywianRpIjoiZjY2NTY0YTYtNzhlZS00ZjgzLWEzOGQtMmM1Zjk4NzA0ZWUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkwMTEzLCJleHAiOjE2NjY0OTEwMTN9.eCVrAA0YbjqWq21L78rE00COlO7sJV8TvZp6Hzz7xmw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks/1",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - ID DOES NOT EXIST",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MDExMywianRpIjoiZjY2NTY0YTYtNzhlZS00ZjgzLWEzOGQtMmM1Zjk4NzA0ZWUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkwMTEzLCJleHAiOjE2NjY0OTEwMTN9.eCVrAA0YbjqWq21L78rE00COlO7sJV8TvZp6Hzz7xmw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks/50",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks",
+										"50"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "DeleteTaskById",
+					"item": [
+						{
+							"name": "Success",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MTIzNSwianRpIjoiMGFjMzgyNzAtMGJiNS00Y2I1LWIwN2ItMDc5ZGYyYzU5NWQ4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkxMjM1LCJleHAiOjE2NjY0OTIxMzV9.IfVO5NGff9OOzKkA18MLL_CZ4Z6wH7vVHMF8IbvR3Mw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks/2",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - ID DOES NOT EXIST Copy",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5MTMyMiwianRpIjoiZDMxOTc5YjMtOTI0NC00ZjQwLWI1ZDUtYjQ5ZmU1ZTQwYzUxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDkxMzIyLCJleHAiOjE2NjY0OTIyMjJ9._J5jF6CIjRDxReZGL4QL4yf-5wnfG9Q5CspdqW8HwPY",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks/50",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks",
+										"50"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "UpdateTaskById",
+					"item": [
+						{
+							"name": "Success",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5NzYwNiwianRpIjoiODc2YTc1MTQtNjA2Zi00YzM0LWE5YjUtODEzMTRkODU0MjIzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDk3NjA2LCJleHAiOjE2NjY0OTg1MDZ9.fYI_W_HDQYdRijxFigXRYPlFKGk7qM74Nrvr_qLryNM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nuevoFormato",
+											"value": "ogg",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks/1",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FAILED - TASKID DOES NOT EXIST",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5NzYwNiwianRpIjoiODc2YTc1MTQtNjA2Zi00YzM0LWE5YjUtODEzMTRkODU0MjIzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDk3NjA2LCJleHAiOjE2NjY0OTg1MDZ9.fYI_W_HDQYdRijxFigXRYPlFKGk7qM74Nrvr_qLryNM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nuevoFormato",
+											"value": "ogg",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:3000/api/tasks/9",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tasks",
+										"9"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Consumer",
+			"item": [
+				{
+					"name": "AudioConverter",
+					"item": [
+						{
+							"name": "Success",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filepath\" : \"E:\\\\flor.mp3\",\r\n    \"newFormat\" : \"wav\",\r\n    \"id\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/convert",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"convert"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - WRONG FILEPATH",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filepath\" : \"\",\r\n    \"newFormat\" : \"wav\",\r\n    \"id\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/convert",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"convert"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - FORMAT NOT MP3, WAV or OGG",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filepath\" : \"E:\\\\flor.mp4\",\r\n    \"newFormat\" : \"wav\",\r\n    \"id\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/convert",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"convert"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - NO NEW FORMAT",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filepath\" : \"E:\\\\flor.mp3\",\r\n    \"id\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/api/convert",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"convert"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "MailNotifier",
+					"item": [
+						{
+							"name": "Success",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"daachalabu@unal.edu.co\",\r\n    \"file\":\"E:\\\\flor.mp3\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:4000/api/notify",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"notify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failed - NO TASKID",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:4000/api/notify",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "4000",
+									"path": [
+										"api",
+										"notify"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "File",
+			"item": [
+				{
+					"name": "Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5NjcxNiwianRpIjoiMzg0ZGJmYWItNmE0MS00Y2Y1LWJhZGEtMDQzMmU1ZmE2YWQzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDk2NzE2LCJleHAiOjE2NjY0OTc2MTZ9.g-WUfPOkPQeMGQd0_by4BXoIwmtpUpImQSfud3-4hwE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/files/flor.mp3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"files",
+								"flor.mp3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Failed - FILE NOT FOUND",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjQ5NjcxNiwianRpIjoiMzg0ZGJmYWItNmE0MS00Y2Y1LWJhZGEtMDQzMmU1ZmE2YWQzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjY2NDk2NzE2LCJleHAiOjE2NjY0OTc2MTZ9.g-WUfPOkPQeMGQd0_by4BXoIwmtpUpImQSfud3-4hwE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:3000/api/files/flo5r.mp3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"files",
+								"flo5r.mp3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
