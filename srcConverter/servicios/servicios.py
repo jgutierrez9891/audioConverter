@@ -17,7 +17,7 @@ class Converter(Resource):
         taskTmp.conversionTimeStamp = now.strftime("%Y-%m-%d %H:%M:%S")
         db.session.commit()
         
-        print((taskTmp.conversionTimeStamp  - taskTmp.timeStamp).total_seconds())
+        #print((taskTmp.conversionTimeStamp  - taskTmp.timeStamp).total_seconds())
         taskTmp.secondsTakedToStartConversion = (taskTmp.conversionTimeStamp  - taskTmp.timeStamp).total_seconds()
         db.session.commit()
         
@@ -25,10 +25,10 @@ class Converter(Resource):
         
         jsons = {"email":userTmp.email,"file":request.json["filepath"]}
         
-        print("location: "+request.json["filepath"])
+        #print("location: "+request.json["filepath"])
         location = request.json["filepath"]
     
-        print("newFormat: "+request.json["newFormat"])
+        #print("newFormat: "+request.json["newFormat"])
         nFormat = request.json["newFormat"]
         
         locationNoFormat = location.split(".")[0]
@@ -40,7 +40,7 @@ class Converter(Resource):
                 song = AudioSegment.from_mp3(location)
                 song.export(locationNoFormat+"."+nFormat, format=nFormat)
                 x = requests.post(url = url, json = jsons)
-                print(x)
+                #print(x)
                 taskTmp.status = "converted"
                 db.session.commit()
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
@@ -49,7 +49,7 @@ class Converter(Resource):
                     song = AudioSegment.from_ogg(location)
                     song.export(locationNoFormat+"."+nFormat, format=nFormat)
                     x = requests.post(url = url, json = jsons)
-                    print(x)
+                    #print(x)
                     taskTmp.status = "converted"
                     db.session.commit()
                     return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
@@ -58,7 +58,7 @@ class Converter(Resource):
                         song = AudioSegment.from_wav(location)
                         song.export(locationNoFormat+"."+nFormat, format=nFormat)
                         x = requests.post(url = url, json = jsons)
-                        print(x)
+                        #print(x)
                         taskTmp.status = "converted"
                         db.session.commit()
                         return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
