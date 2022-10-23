@@ -62,11 +62,19 @@ def serialize(row):
 class Tasks(Resource):
     
     @jwt_required()
-    def get(self,order=0, maxel=0):
+    def get(self):
         # current_user_id = request.json['id_usuario'] #for testing without JWT
         current_user_id = get_jwt_identity()
-        order = int(order)
-        maxel = int(maxel)
+        args = request.args
+        try:
+            order = int(args.get("order"))
+        except:
+            order =0
+
+        try:
+            maxel = int(args.get("maxel"))
+        except:
+            maxel =0
 
         if maxel>0:
             if order==0:

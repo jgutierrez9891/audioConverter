@@ -23,7 +23,7 @@ db.drop_all()
 db.create_all()
 
 api = Api(app)
-api.add_resource(Tasks, '/api/tasks', '/api/tasks/<order>', '/api/tasks/<order>/<maxel>', '/api/task/<idtarea>')
+api.add_resource(Tasks, '/api/tasks')
 api.add_resource(Auth, '/api/auth/signup')
 api.add_resource(AuthLogin, '/api/auth/login')
 api.add_resource(TaskR, '/api/task/<taskId>')
