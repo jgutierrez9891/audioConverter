@@ -149,13 +149,20 @@ class TaskR(Resource):
             return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
 
         tarea = Task.query.filter(Task.id == taskId and Task.id_usuario==id_usuario).first()
-        tarea.newFormat = request.values['nuevoFormato']
+        destinationFormat = tarea.newFormat
+        justFileName = tarea.fileName.split('.')[0]
+        destinationFileName = justFileName+"."+destinationFormat
+        if tarea.status =="processed":
+            if(os.path.isfile(destinationFileName)):
+                os.remove(destinationFileName)
+        tarea.newFormat = request.values["nuevoFormato"]
+        tarea.status = "uploaded"
 
         db.session.commit()
         #Se envía tarea a la cola
         mensaje = {"filepath":tarea.fileName, "newFormat":request.values['nuevoFormato'], "id": tarea.id}
         q = publish_task_queue(mensaje)
-        return {"mensaje": "Tarea actualizada exitosamente", "id": tarea.id, "nuevoFormato": tarea.newFormat},200
+        return {"mensaje": "Tarea actualizada exitosamente", "tarea": serialize(tarea)},200
     
     @jwt_required()
     def delete(self, taskId):
