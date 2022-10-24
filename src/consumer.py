@@ -4,7 +4,7 @@ import requests
 def main():
     try:
         connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
+            pika.ConnectionParameters(host='localhost',heartbeat=0))
     except pika.exceptions.AMQPConnectionError:
         print("Failed to connect to RabbitMQ service. Message wont be sent.")
         return
