@@ -37,16 +37,20 @@ Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de
  9. Instale las dependencias del proyecto. En la terminal ejecute:
 > python3 -m pip install -r requirements.txt
  11. En una nueva terminal inicie el API Flask. Ubiquese en la carpeta del proyecto que descargo de git (*audioConverter*) y ejecute los siguientes comandos:
->cd src
->flask run -p 3000
- 12. En una nueva terminal inicie el componente de notificaciones. Ejecute los siguientes comandos:
+> cd src
+>
+> flask run -p 3000
+12. En una nueva terminal inicie el componente de notificaciones. Ejecute los siguientes comandos:
 >cd srcNotifications
+>
 >flask run -p 4000
 13. En una nueva terminal inicie el componente convertidor. Ejecute los siguientes comandos:
 >cd srcConverter
+>
 >flask run -p 5000
 14. En una nueva terminal inicie el componente de conexión a la cola para conversión. Ejecute los siguientes comandos:
 >cd src
+>
 >python3 consumer.py
 
 
