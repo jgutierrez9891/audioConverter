@@ -11,8 +11,8 @@ class Converter(Resource):
     def post(self):
         
         now = datetime.now()
-        url = "https://api.mailgun.net/v3/sandboxd586480a798c4b9098cfe10b39e3a060.mailgun.org/messages"
-        auth = ("api", "458a382568a1d6f5ae4bf6051fbcbaf0-8845d1b1-fa254d35")
+        url = "https://api.mailgun.net/v3/sandboxddf98cda1dd84031bc13cda246e42344.mailgun.org/messages"
+        auth = ("api", "API_KEY")
 
         taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
         taskTmp.conversionTimeStamp = now.strftime("%Y-%m-%d %H:%M:%S")
