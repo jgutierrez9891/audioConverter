@@ -38,7 +38,7 @@ class Converter(Resource):
             if format == "mp3":
                 song = AudioSegment.from_mp3(location)
                 song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                x = requests.post(url = url,auth = auth ,data = jsons)
+                #x = requests.post(url = url,auth = auth ,data = jsons)
                 #print(x)
                 taskTmp.status = "processed"
                 db.session.commit()
@@ -47,7 +47,7 @@ class Converter(Resource):
                 if format == "ogg":
                     song = AudioSegment.from_ogg(location)
                     song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                    x = requests.post(url = url,auth = auth ,data = jsons)
+                    #x = requests.post(url = url,auth = auth ,data = jsons)
                     #print(x)
                     taskTmp.status = "processed"
                     db.session.commit()
@@ -56,7 +56,7 @@ class Converter(Resource):
                     if format == "wav":
                         song = AudioSegment.from_wav(location)
                         song.export(locationNoFormat+"."+nFormat, format=nFormat)
-                        x = requests.post(url = url,auth = auth ,data = jsons)
+                        #x = requests.post(url = url,auth = auth ,data = jsons)
                         #print(x)
                         taskTmp.status = "processed"
                         db.session.commit()
