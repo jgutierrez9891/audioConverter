@@ -5,7 +5,7 @@ from srcConverter.servicios.servicios import Converter
 from srcConverter.modelos.modelos import db
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-UPLOAD_FOLDER = 'C:\\ruta'
+UPLOAD_FOLDER = 'mnt/files'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

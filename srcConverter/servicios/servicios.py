@@ -9,7 +9,7 @@ from datetime import datetime
 
 class Converter(Resource):
     def post(self):
-        
+        print("coverter started")
         now = datetime.now()
         url = "https://api.mailgun.net/v3/sandboxddf98cda1dd84031bc13cda246e42344.mailgun.org/messages"
         auth = ("api", "API_KEY")
@@ -17,9 +17,10 @@ class Converter(Resource):
         taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
         taskTmp.conversionTimeStamp = now.strftime("%Y-%m-%d %H:%M:%S")
         db.session.commit()
-        
+        print("commit 1 done")
         taskTmp.secondsTakedToStartConversion = (taskTmp.conversionTimeStamp  - taskTmp.timeStamp).total_seconds()
         db.session.commit()
+        print("commit 2 done")
         
         userTmp = User.query.filter(User.id == taskTmp.id_usuario).first()
         
@@ -34,6 +35,7 @@ class Converter(Resource):
 			     "subject": "Your file Conversion is done!",
 			     "text": "The File: "+str(location)+" has been converted"}
         
+        print("before convert")
         try:
             if format == "mp3":
                 song = AudioSegment.from_mp3(location)
@@ -42,6 +44,7 @@ class Converter(Resource):
                 #print(x)
                 taskTmp.status = "processed"
                 db.session.commit()
+                print("converted to mp3")
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             else: 
                 if format == "ogg":
@@ -51,6 +54,7 @@ class Converter(Resource):
                     #print(x)
                     taskTmp.status = "processed"
                     db.session.commit()
+                    print("converted to ogg")
                     return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
                 else:
                     if format == "wav":
@@ -60,10 +64,14 @@ class Converter(Resource):
                         #print(x)
                         taskTmp.status = "processed"
                         db.session.commit()
+                        print("converted to wav")
                         return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
                     else:
+                        print("incorrect format return")
                         return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400
         except Exception: 
+            print("error")
+            print(traceback.print_exc())
             taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
             taskTmp.conversionTimeStamp = ""
             taskTmp.secondsTakedToStartConversion = ""
