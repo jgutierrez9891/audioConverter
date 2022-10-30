@@ -11,7 +11,7 @@ data_folder = Path("/tmp/audios")
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = data_folder
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:Grupo21@127.0.0.1:5433/flask_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:Grupo21@127.0.0.1:5432/flask_db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_SECRET_KEY'] = 'm723984iefwkjp09480kdjsdhsd7nenkjcsd'
