@@ -59,11 +59,11 @@ Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de
 
 ### Prerequisitos Cloud
 Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de la solución:
- 1. Base de datos **Postgres** con un esquema llamado ***flask_db***
+ 1. Base de datos **Postgres** con un esquema llamado ***flask_db***, ejecutando en una instancia de base de datos del servicio cloud de SQL de GCP.
  2. Creacion de una maquina que funcione como un nfs y configuracion con carpeta y ruta para guardar tanto los archivos de subida como los archivos para descarga
  3. 2 maquinas virtuales ambas corriendo con sistema operativo **Linux Debian 11.5**, una para el api y la otra para el worker
  4. Tener git instalado en ambas maquinas
- 5. configurar en la maquina del worker el Message broker **RabbitMQ** ejecutando y con una cola configurada así:
+ 5. Configurar en la maquina del worker el Message broker **RabbitMQ** ejecutando y con una cola configurada así:
 	 - Tipo: Clásica
 	 - Nombre: ***conversion_processs***
 	 - Durabilidad: Durable
@@ -73,7 +73,10 @@ Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de
 >sudo apt-get install python3-venv
 
 ### Pasos para la instalación Cloud
- 1. Configurar tanto en la maquina del api como en el worker la conexion con el nfs: (CARLOS) 
+ 1. Configurar tanto en la maquina del api como en el worker la conexion con el nfs donde se deben reemplazar nfs-ip, carpetaComaprtida y carpetaLocal por los valores correspondientes a ip y rutas respectivamente:
+ >apt-get install nfs-common -y
+ >mount nfs-ip:carpetaComaprtida carpetaLocal
+ >chmod 777 carpetaLocal
  2. Instalar en la maquina worker la librería **ffMPEg**. En una terminal ejecute:
  >sudo apt install ffmpeg
  3. Descargar el repositorio en ambas maquinas usando 
