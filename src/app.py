@@ -7,11 +7,11 @@ from src.modelos.modelos import db
 from pathlib import Path
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-data_folder = Path("/tmp/audios")
+data_folder = Path("/mnt/files")
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = data_folder
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/flask_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:Grupo21@127.0.0.1:5432/flask_db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_SECRET_KEY'] = 'm723984iefwkjp09480kdjsdhsd7nenkjcsd'
