@@ -3,9 +3,12 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from srcConverter.servicios.servicios import Converter
 from srcConverter.modelos.modelos import db
+import os
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
 UPLOAD_FOLDER = 'mnt/files'
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../audioconverter-service-key.json'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
