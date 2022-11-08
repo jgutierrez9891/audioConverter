@@ -10,16 +10,6 @@ from google.cloud import storage
 
 storage_client = storage.Client()
 
-def upload_to_bucket(blob_name, file_path):
-    try:
-        bucket = storage_client.get_bucket('audioconverter-files')
-        blob = bucket.blob(blob_name)
-        blob.upload_from_filename(file_path)
-        return True
-    except Exception as e:
-        print(e)
-        return False
-
 def download_from_bucket(blob_name, file_path_destiny):
     try:
         bucket = storage_client.get_bucket('audioconverter-files')
@@ -55,7 +45,9 @@ class Converter(Resource):
             blobname= 'english.pdf'
             destiantionFilepath = os.path.join(os.getcwd(), 'file2.pdf')
             file_downloaded = download_from_bucket(blobname, destiantionFilepath)
-            file_upload = upload_to_bucket('test.pdf', os.path.join(os.getcwd(), 'file2.pdf'))
+            bucket = storage_client.get_bucket('audioconverter-files')
+            blob = bucket.blob('test3.pdf')
+            blob.upload_from_filename(destiantionFilepath)
 
         print("coverter started")
 
@@ -92,15 +84,48 @@ class Converter(Resource):
             destinyPath = '/'+ locationNoFormat+"."+nFormat
             if format == "mp3":
                 song = AudioSegment.from_mp3(local_filepath)
-                self.convertProcess(url, auth, taskTmp, nFormat, jsons, postR, destinyPath, song, bucket_filepath)
+                song.export(destinyPath, format=nFormat)
+                bucket = storage_client.get_bucket('audioconverter-files')
+                blob = bucket.blob(destinyPath[1:])
+                blob.upload_from_filename(destinyPath)
+                if postR:
+                    x = requests.post(url = url,auth = auth ,data = jsons)
+                    print(x)
+                taskTmp.status = "processed"
+                db.session.commit()
+                print("converted to " + nFormat)
+                os.remove('/'+bucket_filepath)
+                os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             elif format == "ogg":
                 song = AudioSegment.from_ogg(local_filepath)
-                self.convertProcess(url, auth, taskTmp, nFormat, jsons, postR, destinyPath, song, bucket_filepath)
+                song.export(destinyPath, format=nFormat)
+                bucket = storage_client.get_bucket('audioconverter-files')
+                blob = bucket.blob(destinyPath[1:])
+                blob.upload_from_filename(destinyPath)
+                if postR:
+                    x = requests.post(url = url,auth = auth ,data = jsons)
+                    print(x)
+                taskTmp.status = "processed"
+                db.session.commit()
+                print("converted to " + nFormat)
+                os.remove('/'+bucket_filepath)
+                os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             elif format == "wav":
                 song = AudioSegment.from_wav(local_filepath)
-                self.convertProcess(url, auth, taskTmp, nFormat, jsons, postR, destinyPath, song, bucket_filepath)
+                song.export(destinyPath, format=nFormat)
+                bucket = storage_client.get_bucket('audioconverter-files')
+                blob = bucket.blob(destinyPath[1:])
+                blob.upload_from_filename(destinyPath)
+                if postR:
+                    x = requests.post(url = url,auth = auth ,data = jsons)
+                    print(x)
+                taskTmp.status = "processed"
+                db.session.commit()
+                print("converted to " + nFormat)
+                os.remove('/'+bucket_filepath)
+                os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             else:
                 print("incorrect format return")
@@ -109,22 +134,9 @@ class Converter(Resource):
         except Exception: 
             print("error in conversion !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             print(traceback.print_exc())
-            # taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
-            # taskTmp.conversionTimeStamp = ""
-            # taskTmp.secondsTakedToStartConversion = ""
-            # db.session.commit()
-            # os.remove(bucket_filepath)
+            taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
+            taskTmp.conversionTimeStamp = ""
+            taskTmp.secondsTakedToStartConversion = ""
+            db.session.commit()
+            os.remove(bucket_filepath)
             return {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
-
-    def convertProcess(self, url, auth, taskTmp, nFormat, jsons, postR, destinyPath, song, bucket_filepath):
-        song.export(destinyPath, format=nFormat)
-        upload_to_bucket(destinyPath[1:], destinyPath)
-        if postR:
-            x = requests.post(url = url,auth = auth ,data = jsons)
-            print(x)
-        taskTmp.status = "processed"
-        db.session.commit()
-        print("converted to " + nFormat)
-        os.remove('/'+bucket_filepath)
-        os.remove(destinyPath)
-            
