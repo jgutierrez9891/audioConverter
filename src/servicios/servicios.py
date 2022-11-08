@@ -13,6 +13,9 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from src.publisher import publish_task_queue
 from pydub import AudioSegment
 from sqlalchemy.sql import text
+from google.cloud import storage
+
+storage_client = storage.Client()
 
 def validate_email(email):
         pattern = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
@@ -106,8 +109,16 @@ class Tasks(Resource):
             print (file.filename)
             filename = secure_filename(file.filename)
             #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            
+            print('storage preparing')
+            storage_client = storage.Client()
+            audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
+            print('bucket name: '+audio_bucket.name)
+            
             file.save(app.config['UPLOAD_FOLDER'] / filename)
             filepath = str (app.config['UPLOAD_FOLDER'] / filename)
+            blob = audio_bucket.blob(str(filename))
+            blob.upload_from_filename(filepath)
         else:
             print ("Formato invalido" + file.filename)
             return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
@@ -120,7 +131,7 @@ class Tasks(Resource):
         db.session.commit()
 
         #Se envía tarea a la cola
-        mensaje = {"filepath":filepath, "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
+        mensaje = {"filepath":str(filename), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
         q = publish_task_queue(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
