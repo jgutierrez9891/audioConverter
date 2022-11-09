@@ -135,8 +135,6 @@ class Converter(Resource):
             print("error in conversion !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             print(traceback.print_exc())
             taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
-            taskTmp.conversionTimeStamp = ""
-            taskTmp.secondsTakedToStartConversion = ""
             db.session.commit()
             os.remove(bucket_filepath)
             return {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
