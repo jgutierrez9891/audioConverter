@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
@@ -7,6 +8,7 @@ from src.modelos.modelos import db
 from pathlib import Path
 
 app = Flask(__name__)
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
 app.config['UPLOAD_FOLDER'] = "/audioConverter/files"
 app.config['GCP_BUCKET_NAME'] = "audioconverter-files"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:Grupo21@127.0.0.1:5432/flask_db"
