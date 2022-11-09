@@ -11,8 +11,8 @@ from google.cloud.sql.connector import Connector, IPTypes
 
 # initialize Cloud SQL Python Connector object
 instance_connection_name = "audioconverter-366014:us-central1:vinilosappdb" # e.g. 'project:region:instance'
-db_user = os.environ["audioconverteru@audioconverter-366014.iam"]  # e.g. 'my-db-user'
-db_name = os.environ["flask_db"]  # e.g. 'my-database'
+db_user = "audioconverteru@audioconverter-366014.iam"  # e.g. 'my-db-user'
+db_name = "flask_db"  # e.g. 'my-database'
 ip_type = IPTypes.PUBLIC
 connector = Connector()
 def getconn():
