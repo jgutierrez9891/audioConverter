@@ -122,10 +122,8 @@ class Tasks(Resource):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             
-            print('storage preparing')
             storage_client = storage.Client()
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-            print('bucket name: '+audio_bucket.name)
             
             filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
             blob = audio_bucket.blob(str(filepath)[1:])
@@ -277,19 +275,16 @@ class AuthLogin(Resource):
 class FilesR(Resource):   
     @jwt_required()
     def get(self, filename):
-        print('storage preparing')
         storage_client = storage.Client()
         audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-        print('bucket name')
-        print(audio_bucket.name)
 
         filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
-        blob = audio_bucket.blob(str(filepath)[1:])
+        blob = str(filepath)[1:]
         local_filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
         file_downloaded = download_from_bucket(blob, local_filepath)
 
         try:
-            return send_file(file_downloaded, attachment_filename=filename)
+            return send_file(local_filepath, attachment_filename=filename)
         except:
             return {"resultado": "ERROR", "mensaje": 'El archivo no existe'}, 409
     
