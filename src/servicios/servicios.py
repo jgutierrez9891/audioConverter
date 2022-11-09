@@ -13,6 +13,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from src.publisher import publish_task_queue
 from pydub import AudioSegment
 from sqlalchemy.sql import text
+from google.cloud import storage
 
 def validate_email(email):
         pattern = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
@@ -92,6 +93,7 @@ class Tasks(Resource):
 
     @jwt_required()
     def post(self):
+        storage_client = storage.Client()
         now = datetime.now()
         dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
         # id_usuario = request.values['id_usuario'] #for testing without JWT
@@ -108,6 +110,10 @@ class Tasks(Resource):
             #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             file.save(app.config['UPLOAD_FOLDER'] / filename)
             filepath = str (app.config['UPLOAD_FOLDER'] / filename)
+            bucket = storage_client.get_bucket('audioconverter-files')
+            blob = bucket.blob(filepath[1:])
+            blob.upload_from_filename(filepath)
+            os.remove(filepath)
         else:
             print ("Formato invalido" + file.filename)
             return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
@@ -254,6 +260,7 @@ class FilesR(Resource):
     @jwt_required()
     def get(self, filename):
         filepath = str (app.config['UPLOAD_FOLDER'] / filename)
+        file_downloaded = download_from_bucket(filepath[1:], filepath)
 
         try:
             return send_file(filepath, attachment_filename=filename)
@@ -261,3 +268,14 @@ class FilesR(Resource):
             return {"resultado": "ERROR", "mensaje": 'El archivo no existe'}, 409
     
     
+def download_from_bucket(blob_name, file_path_destiny):
+    storage_client = storage.Client()
+    try:
+        bucket = storage_client.get_bucket('audioconverter-files')
+        blob = bucket.blob(blob_name)
+        with open(file_path_destiny, 'wb') as f:
+            storage_client.download_blob_to_file(blob, f)
+        return True
+    except Exception as e:
+        print(e)
+        return False

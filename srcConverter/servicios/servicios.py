@@ -29,8 +29,10 @@ class Converter(Resource):
         print('bucket name')
         print(audio_bucket.name)
 
+        # para testeo
         if True:
             if True:
+                # creacion de usuario y tarea
                 nuevoUsuario = User(username = "carlos", email = "ca@a.com", password="123asdqeE")
                 db.session.add(nuevoUsuario)
                 db.session.commit()
@@ -42,9 +44,11 @@ class Converter(Resource):
                 db.session.commit()
 
             print('storage test started')
+            # descarga de archivo
             blobname= 'english.pdf'
             destiantionFilepath = os.path.join(os.getcwd(), 'file2.pdf')
             file_downloaded = download_from_bucket(blobname, destiantionFilepath)
+            # carga de archivo
             bucket = storage_client.get_bucket('audioconverter-files')
             blob = bucket.blob('test3.pdf')
             blob.upload_from_filename(destiantionFilepath)

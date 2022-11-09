@@ -5,9 +5,11 @@ from src.servicios.servicios import Auth, AuthLogin, TaskR, Tasks, FilesR
 
 from src.modelos.modelos import db
 from pathlib import Path
+import os
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
 data_folder = Path("/mnt/files")
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../audioconverter-service-key.json'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = data_folder
