@@ -115,10 +115,11 @@ class Tasks(Resource):
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
             print('bucket name: '+audio_bucket.name)
             
-            file.save(app.config['UPLOAD_FOLDER'] / filename)
-            filepath = str (app.config['UPLOAD_FOLDER'] / filename)
-            blob = audio_bucket.blob(str(filename))
+            filepath = app.config['UPLOAD_FOLDER']+"/"+filename
+            blob = audio_bucket.blob(str(filepath)[1:])
             blob.upload_from_filename(filepath)
+
+            os.remove(filepath)
         else:
             print ("Formato invalido" + file.filename)
             return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
