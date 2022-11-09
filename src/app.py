@@ -10,10 +10,10 @@ from pathlib import Path
 from google.cloud.sql.connector import Connector, IPTypes
 
 # initialize Cloud SQL Python Connector object
-instance_connection_name = os.environ["INSTANCE_CONNECTION_NAME"]  # e.g. 'project:region:instance'
-db_user = os.environ["DB_USER"]  # e.g. 'my-db-user'
-db_name = os.environ["DB_NAME"]  # e.g. 'my-database'
-ip_type = IPTypes.PRIVATE if os.environ.get("PRIVATE_IP") else IPTypes.PUBLIC
+instance_connection_name = "audioconverter-366014:us-central1:vinilosappdb" # e.g. 'project:region:instance'
+db_user = os.environ["audioconverteru@audioconverter-366014.iam"]  # e.g. 'my-db-user'
+db_name = os.environ["flask_db"]  # e.g. 'my-database'
+ip_type = IPTypes.PUBLIC
 connector = Connector()
 def getconn():
     with Connector() as connector:
