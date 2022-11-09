@@ -17,7 +17,7 @@ ip_type = IPTypes.PUBLIC
 connector = Connector()
 def getconn():
     with Connector() as connector:
-        conn: connector.connect(
+        conn = connector.connect(
             instance_connection_name,
             "pg8000",
             user=db_user,
