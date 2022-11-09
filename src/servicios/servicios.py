@@ -62,6 +62,18 @@ def serialize(row):
         "newFormat" : row.newFormat,
         "status" : row.status
     } 
+
+def download_from_bucket(blob_name, file_path_destiny):
+    try:
+        bucket = storage_client.get_bucket('audioconverter-files')
+        blob = bucket.blob(blob_name)
+        with open(file_path_destiny, 'wb') as f:
+            storage_client.download_blob_to_file(blob, f)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
 class Tasks(Resource):
     
     @jwt_required()
@@ -115,7 +127,7 @@ class Tasks(Resource):
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
             print('bucket name: '+audio_bucket.name)
             
-            filepath = app.config['UPLOAD_FOLDER']+"/"+filename
+            filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
             blob = audio_bucket.blob(str(filepath)[1:])
             blob.upload_from_filename(filepath)
 
@@ -265,10 +277,19 @@ class AuthLogin(Resource):
 class FilesR(Resource):   
     @jwt_required()
     def get(self, filename):
-        filepath = str (app.config['UPLOAD_FOLDER'] / filename)
+        print('storage preparing')
+        storage_client = storage.Client()
+        audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
+        print('bucket name')
+        print(audio_bucket.name)
+
+        filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
+        blob = audio_bucket.blob(str(filepath)[1:])
+        local_filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
+        file_downloaded = download_from_bucket(blob, local_filepath)
 
         try:
-            return send_file(filepath, attachment_filename=filename)
+            return send_file(file_downloaded, attachment_filename=filename)
         except:
             return {"resultado": "ERROR", "mensaje": 'El archivo no existe'}, 409
     
