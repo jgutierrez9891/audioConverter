@@ -21,3 +21,4 @@ yagmail==0.15.293
 requests
 pathlib==1.0.1
 google-cloud-storage
+cloud-sql-python-connector[pg8000]
