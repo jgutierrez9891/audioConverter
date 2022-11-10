@@ -65,8 +65,8 @@ class Converter(Resource):
         
         userTmp = User.query.filter(User.id == taskTmp.id_usuario).first()
         
-        bucket_filepath = request.json["filepath"]
-        local_filepath = '/'+ bucket_filepath
+        local_filepath = request.json["filepath"]
+        bucket_filepath = local_filepath[1:]
         file_downloaded = download_from_bucket(bucket_filepath, local_filepath)
         nFormat = request.json["newFormat"]
         
@@ -94,7 +94,7 @@ class Converter(Resource):
                 taskTmp.status = "processed"
                 db.session.commit()
                 print("converted to " + nFormat)
-                os.remove('/'+bucket_filepath)
+                os.remove(local_filepath)
                 os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             elif format == "ogg":
@@ -109,7 +109,7 @@ class Converter(Resource):
                 taskTmp.status = "processed"
                 db.session.commit()
                 print("converted to " + nFormat)
-                os.remove('/'+bucket_filepath)
+                os.remove(local_filepath)
                 os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             elif format == "wav":
@@ -124,17 +124,17 @@ class Converter(Resource):
                 taskTmp.status = "processed"
                 db.session.commit()
                 print("converted to " + nFormat)
-                os.remove('/'+bucket_filepath)
+                os.remove(local_filepath)
                 os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             else:
                 print("incorrect format return")
-                os.remove(bucket_filepath)
+                os.remove(local_filepath)
                 return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400       
         except Exception: 
             print("error in conversion !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             print(traceback.print_exc())
             taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
             db.session.commit()
-            os.remove(bucket_filepath)
+            os.remove(local_filepath)
             return {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
