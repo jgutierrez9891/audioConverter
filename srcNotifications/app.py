@@ -27,7 +27,7 @@ def getconn():
         )
         return conn
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../audioconverter-service-key.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = Path("/mnt/files")
