@@ -6,7 +6,6 @@ from src.servicios.servicios import Auth, AuthLogin, TaskR, Tasks, FilesR
 
 from src.modelos.modelos import db
 from pathlib import Path
-import os
 
 from google.cloud.sql.connector import Connector, IPTypes
 
