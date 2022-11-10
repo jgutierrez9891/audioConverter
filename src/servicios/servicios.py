@@ -136,13 +136,13 @@ class Tasks(Resource):
         usuario = User.query.get(id_usuario)
         if usuario is None:
             return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
-        nueva_tarea = Task(fileName = filepath, newFormat = request.values['nuevoFormato'], \
+        nueva_tarea = Task(fileName = filename, newFormat = request.values['nuevoFormato'], \
             timeStamp = dt_string, status = "uploaded", id_usuario = id_usuario)
         db.session.add(nueva_tarea)
         db.session.commit()
 
         #Se envía tarea a la cola
-        mensaje = {"filepath":str(filename), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
+        mensaje = {"filepath":str(filepath), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
         q = publish_task_queue(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
