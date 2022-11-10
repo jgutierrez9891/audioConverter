@@ -142,7 +142,7 @@ class Tasks(Resource):
         db.session.commit()
 
         #Se envía tarea a la cola
-        mensaje = {"filepath":str(filename), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
+        mensaje = {"filepath":str(filepath), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
         q = publish_task_queue(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     

@@ -28,9 +28,11 @@ def getconn():
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
 UPLOAD_FOLDER = '/mnt/files'
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
 
 app = Flask(__name__)
+app.config['EMAIL_API_KEY'] = ""
+app.config['GCP_BUCKET_NAME'] = "audioconverter-files"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
