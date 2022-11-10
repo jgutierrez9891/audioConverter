@@ -1,5 +1,6 @@
 import traceback
 from flask import request
+from flask import current_app as app
 from flask_restful import Resource
 from pydub import AudioSegment
 from srcConverter.modelos.modelos import User, db, Task
@@ -12,7 +13,7 @@ storage_client = storage.Client()
 
 def download_from_bucket(blob_name, file_path_destiny):
     try:
-        bucket = storage_client.get_bucket('audioconverter-files')
+        bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
         blob = bucket.blob(blob_name)
         with open(file_path_destiny, 'wb') as f:
             storage_client.download_blob_to_file(blob, f)
@@ -25,12 +26,11 @@ class Converter(Resource):
         
         print('storage preparing')
         storage_client = storage.Client()
-        audio_bucket = storage_client.get_bucket('audioconverter-files')
+        audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
         print('bucket name')
         print(audio_bucket.name)
 
-        # para testeo
-        if True:
+        if True: #testing purposes
             if True:
                 # creacion de usuario y tarea
                 nuevoUsuario = User(username = "carlos", email = "ca@a.com", password="123asdqeE")
@@ -48,8 +48,7 @@ class Converter(Resource):
             blobname= 'english.pdf'
             destiantionFilepath = os.path.join(os.getcwd(), 'file2.pdf')
             file_downloaded = download_from_bucket(blobname, destiantionFilepath)
-            # carga de archivo
-            bucket = storage_client.get_bucket('audioconverter-files')
+            bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
             blob = bucket.blob('test3.pdf')
             blob.upload_from_filename(destiantionFilepath)
 
@@ -57,7 +56,7 @@ class Converter(Resource):
 
         now = datetime.now()
         url = "https://api.mailgun.net/v3/sandboxddf98cda1dd84031bc13cda246e42344.mailgun.org/messages"
-        auth = ("api", "API_KEY")
+        auth = ("api", app.config['EMAIL_API_KEY'])
 
         taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
         taskTmp.conversionTimeStamp = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -69,8 +68,8 @@ class Converter(Resource):
         
         userTmp = User.query.filter(User.id == taskTmp.id_usuario).first()
         
-        bucket_filepath = request.json["filepath"]
-        local_filepath = '/'+ bucket_filepath
+        local_filepath = request.json["filepath"]
+        bucket_filepath = local_filepath[1:]
         file_downloaded = download_from_bucket(bucket_filepath, local_filepath)
         nFormat = request.json["newFormat"]
         
@@ -89,7 +88,7 @@ class Converter(Resource):
             if format == "mp3":
                 song = AudioSegment.from_mp3(local_filepath)
                 song.export(destinyPath, format=nFormat)
-                bucket = storage_client.get_bucket('audioconverter-files')
+                bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
                 blob = bucket.blob(destinyPath[1:])
                 blob.upload_from_filename(destinyPath)
                 if postR:
@@ -98,13 +97,13 @@ class Converter(Resource):
                 taskTmp.status = "processed"
                 db.session.commit()
                 print("converted to " + nFormat)
-                os.remove('/'+bucket_filepath)
+                os.remove(local_filepath)
                 os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             elif format == "ogg":
                 song = AudioSegment.from_ogg(local_filepath)
                 song.export(destinyPath, format=nFormat)
-                bucket = storage_client.get_bucket('audioconverter-files')
+                bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
                 blob = bucket.blob(destinyPath[1:])
                 blob.upload_from_filename(destinyPath)
                 if postR:
@@ -113,13 +112,13 @@ class Converter(Resource):
                 taskTmp.status = "processed"
                 db.session.commit()
                 print("converted to " + nFormat)
-                os.remove('/'+bucket_filepath)
+                os.remove(local_filepath)
                 os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             elif format == "wav":
                 song = AudioSegment.from_wav(local_filepath)
                 song.export(destinyPath, format=nFormat)
-                bucket = storage_client.get_bucket('audioconverter-files')
+                bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
                 blob = bucket.blob(destinyPath[1:])
                 blob.upload_from_filename(destinyPath)
                 if postR:
@@ -128,19 +127,17 @@ class Converter(Resource):
                 taskTmp.status = "processed"
                 db.session.commit()
                 print("converted to " + nFormat)
-                os.remove('/'+bucket_filepath)
+                os.remove(local_filepath)
                 os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             else:
                 print("incorrect format return")
-                os.remove(bucket_filepath)
+                os.remove(local_filepath)
                 return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400       
         except Exception: 
             print("error in conversion !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             print(traceback.print_exc())
             taskTmp = Task.query.filter(Task.id == int(request.json["id"])).first()
-            taskTmp.conversionTimeStamp = ""
-            taskTmp.secondsTakedToStartConversion = ""
             db.session.commit()
-            os.remove(bucket_filepath)
+            os.remove(local_filepath)
             return {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400

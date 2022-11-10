@@ -15,6 +15,8 @@ from pydub import AudioSegment
 from sqlalchemy.sql import text
 from google.cloud import storage
 
+storage_client = storage.Client()
+
 def validate_email(email):
         pattern = "^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
         if re.match(pattern,email):
@@ -60,6 +62,18 @@ def serialize(row):
         "newFormat" : row.newFormat,
         "status" : row.status
     } 
+
+def download_from_bucket(blob_name, file_path_destiny):
+    try:
+        bucket = storage_client.get_bucket('audioconverter-files')
+        blob = bucket.blob(blob_name)
+        with open(file_path_destiny, 'wb') as f:
+            storage_client.download_blob_to_file(blob, f)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
 class Tasks(Resource):
     
     @jwt_required()
@@ -107,12 +121,15 @@ class Tasks(Resource):
         if file and allowed_file(file.filename):
             print (file.filename)
             filename = secure_filename(file.filename)
-            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            file.save(app.config['UPLOAD_FOLDER'] / filename)
-            filepath = str (app.config['UPLOAD_FOLDER'] / filename)
-            bucket = storage_client.get_bucket('audioconverter-files')
-            blob = bucket.blob(filepath[1:])
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            
+            storage_client = storage.Client()
+            audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
+            
+            filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
+            blob = audio_bucket.blob(str(filepath)[1:])
             blob.upload_from_filename(filepath)
+
             os.remove(filepath)
         else:
             print ("Formato invalido" + file.filename)
@@ -126,7 +143,7 @@ class Tasks(Resource):
         db.session.commit()
 
         #Se envía tarea a la cola
-        mensaje = {"filepath":filepath, "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
+        mensaje = {"filepath":str(filepath), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
         q = publish_task_queue(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
@@ -259,11 +276,16 @@ class AuthLogin(Resource):
 class FilesR(Resource):   
     @jwt_required()
     def get(self, filename):
-        filepath = str (app.config['UPLOAD_FOLDER'] / filename)
-        file_downloaded = download_from_bucket(filepath[1:], filepath)
+        storage_client = storage.Client()
+        audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
+
+        filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
+        blob = str(filepath)[1:]
+        local_filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
+        file_downloaded = download_from_bucket(blob, local_filepath)
 
         try:
-            return send_file(filepath, attachment_filename=filename)
+            return send_file(local_filepath, attachment_filename=filename)
         except:
             return {"resultado": "ERROR", "mensaje": 'El archivo no existe'}, 409
     

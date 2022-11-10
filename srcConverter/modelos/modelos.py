@@ -9,7 +9,7 @@ class Task(db.Model):
     timeStamp = db.Column(db.DateTime())
     status = db.Column(db.String())
     conversionTimeStamp = db.Column(db.DateTime())
-    secondsTakedToStartConversion = db.Column(db.Integer)
+    secondsTakedToStartConversion = db.Column(db.Float)
     id_usuario = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class User(db.Model):
