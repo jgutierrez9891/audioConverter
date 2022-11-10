@@ -29,7 +29,7 @@ class Converter(Resource):
         print('bucket name')
         print(audio_bucket.name)
 
-        if True:
+        if True: #testing purposes
             if True:
                 nuevoUsuario = User(username = "carlos", email = "ca@a.com", password="123asdqeE")
                 db.session.add(nuevoUsuario)

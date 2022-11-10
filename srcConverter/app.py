@@ -26,7 +26,7 @@ def getconn():
         return conn
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-UPLOAD_FOLDER = 'mnt/files'
+UPLOAD_FOLDER = '/mnt/files'
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
 
