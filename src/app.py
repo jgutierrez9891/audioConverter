@@ -1,13 +1,13 @@
 import os
+from pathlib import Path
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from src.servicios.servicios import Auth, AuthLogin, TaskR, Tasks, FilesR
+from google.cloud.sql.connector import Connector, IPTypes
 
 from src.modelos.modelos import db
-from pathlib import Path
-
-from google.cloud.sql.connector import Connector, IPTypes
+from src.servicios.servicios import Auth, AuthLogin, FilesR, TaskR, Tasks, Health
 
 # initialize Cloud SQL Python Connector object
 instance_connection_name = "audioconverter-366014:us-central1:vinilosappdb" # e.g. 'project:region:instance'
@@ -56,5 +56,6 @@ api.add_resource(Auth, '/api/auth/signup')
 api.add_resource(AuthLogin, '/api/auth/login')
 api.add_resource(TaskR, '/api/tasks/<taskId>')
 api.add_resource(FilesR, '/api/files/<filename>')
+api.add_resource(Health, '/api/health')
 
 jwt = JWTManager(app)

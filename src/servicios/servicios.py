@@ -252,6 +252,12 @@ class Auth(Resource):
         db.session.add(nuevoUsuario)
         db.session.commit()
         return {"resultado": "OK", "mensaje": "Usuario creado exitosamente"}, 200
+    
+    
+class Health(Resource):    
+    def get(self):
+        return {"resultado": "OK", "mensaje": "service is alive"}, 200
+    
 
 class AuthLogin(Resource):    
     def post(self):
