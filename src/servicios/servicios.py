@@ -120,7 +120,7 @@ class Tasks(Resource):
         if file and allowed_file(file.filename):
             print (file.filename)
             ct = datetime.now()
-            currentMilliseconds = str(ct.timestamp())
+            currentMilliseconds = str(ct.timestamp()).replace(".","")
             
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], currentMilliseconds+filename))
