@@ -119,13 +119,16 @@ class Tasks(Resource):
         print (file.filename)
         if file and allowed_file(file.filename):
             print (file.filename)
+            ct = datetime.now()
+            currentMilliseconds = str(ct.timestamp()).replace(".","")
+            
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], currentMilliseconds+filename))
             
             storage_client = storage.Client()
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
             
-            filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
+            filepath = str(app.config['UPLOAD_FOLDER'])+"/"+currentMilliseconds+filename
             blob = audio_bucket.blob(str(filepath)[1:])
             blob.upload_from_filename(filepath)
 

@@ -47,8 +47,6 @@ app_context = app.app_context()
 app_context.push()
 
 db.init_app(app)
-db.drop_all()
-db.create_all()
 
 api = Api(app)
 api.add_resource(Tasks, '/api/tasks')
