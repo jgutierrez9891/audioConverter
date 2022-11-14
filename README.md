@@ -10,8 +10,9 @@ audioConverter usa tecnología **Flask** para los API REST, base de datos **Post
 ## Instrucciones para la instalación
 Las siguientes instrucciones para instalación de la solución aplican para una máquina con sistema operativo **Linux Debian 11.5**
 
-## ON PREMISE
+# ON PREMISE
 
+[Release](https://github.com/jgutierrez9891/audioConverter/releases/tag/v1.0.0)
 ### Prerequisitos on premise
 Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de la solución:
  1. Base de datos **Postgres** con un esquema llamado ***flask_db***
@@ -55,7 +56,11 @@ Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de
 >
 >python3 consumer.py
 
-## CLOUD
+# CLOUD
+
+## Iteración 1 básica
+
+[Release](https://github.com/jgutierrez9891/audioConverter/releases/tag/v1.1.0)
 
 ### Prerequisitos Cloud
 Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de la solución:
@@ -111,3 +116,53 @@ Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de
  >python3 consumer.py
 
 
+## Iteración 2: API Escalado
+
+[Release](https://github.com/jgutierrez9891/audioConverter/releases/tag/v1.2.0)
+
+### Prerequisitos Cloud
+Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de la solución:
+1. Base de datos **Postgres** con un esquema llamado ***flask_db***, ejecutando en una instancia de base de datos del servicio cloud de SQL de GCP.
+2. Bucket en **Cloud Storage** con carpeta y ruta para guardar tanto los archivos de subida como los archivos para descarga tanto originales como convertidos
+3. 2 maquinas virtuales ambas con sistema operativo **Linux Debian 11.5**, una para el api y la otra para el worker
+4. Tener git instalado en ambas maquinas
+5. Configurar en la maquina del worker el Message broker **RabbitMQ** ejecutando y con una cola configurada así:
+	 - Tipo: Clásica
+	 - Nombre: ***conversion_processs***
+	 - Durabilidad: Durable
+	 - Auto borrado: NO
+6. **Python 3.9** instalado en ambas maquinas
+7. Realizar instalacion de Entorno virtual de Python en ambas maquinas. 
+8. Para el API debe haber un script que ejecute Flask de manera automatica, para el worker en la línea de comandos ejecute:
+>sudo apt-get install python3-venv
+9. Balanceador de carga para generar nuevas maquinas de API deacuerdo a normas predefinidas
+
+### Pasos para la instalación Cloud
+ 1. Instalar en la maquina worker la librería **ffMPEg**. En una terminal ejecute:
+ >sudo apt install ffmpeg
+ 2. Descargar el repositorio en ambas maquinas usando 
+ >git clone https://github.com/jgutierrez9891/audioConverter.git
+ 3. Instalar la CLI de GCP usando los pasos de la siguiente guia: 
+ >https://cloud.google.com/sdk/docs/install-sdk 
+ 4. Moverse a la carpeta del directorio en ambas maquinas. En una terminal ejecute:
+ >cd audioConverter
+ 5. Instalar el entorno virtual de Python en el worker. En la terminal ejecute:
+ >python3 -m venv env
+ 6. Active el entorno virtual de Python en el worker. En la terminal ejecute:
+ >source env/bin/activate
+ 7. Instale las dependencias del proyecto en el worker. En la terminal ejecute:
+ > python3 -m pip install -r requirements.txt
+ 8. En la maquina Worker abra una nueva terminal e inicie el convertidor Flask. Ejecute los siguientes comandos:
+ >cd srcConverter
+ >
+ >flask run -p 5000
+ 9. En la maquina Worker abra una nueva terminal e inicie la cola. Ejecute los siguientes comandos:
+ >cd src
+ >
+ >sudo docker run --rm -it -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+ 10. En una nueva terminal inicie el componente de conexión a la cola para conversión. Ejecute los siguientes comandos:
+ >cd src
+ >
+ >python3 consumer.py
+ 11. Una vez la maquina del API este configurada se debera generar una imagen apartir de esta para que sea usada como plantilla por el balanceador al momento de generar nuevas maquinas
+ 12. Con la imagen del API alimentar el balanceador de carga y configurar para que al alcanzar un consunmo de recursos del 80% se genere una nueva instancia de maquina virtual
