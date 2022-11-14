@@ -120,7 +120,7 @@ class Tasks(Resource):
         if file and allowed_file(file.filename):
             print (file.filename)
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], currentMilliseconds+filename))
             
             storage_client = storage.Client()
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
