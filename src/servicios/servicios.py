@@ -125,7 +125,9 @@ class Tasks(Resource):
             storage_client = storage.Client()
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
             
-            filepath = str(app.config['UPLOAD_FOLDER'])+"/"+filename
+            ct = datetime.datetime.now()
+            currentMilliseconds = str(ct.timestamp())
+            filepath = str(app.config['UPLOAD_FOLDER'])+"/"+currentMilliseconds+filename
             blob = audio_bucket.blob(str(filepath)[1:])
             blob.upload_from_filename(filepath)
 
