@@ -2,28 +2,44 @@ import pika, sys, os, json
 import requests
 
 def main():
-    try:
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost',heartbeat=0))
-    except pika.exceptions.AMQPConnectionError:
-        print("Failed to connect to RabbitMQ service. Message wont be sent.")
-        return
+    """Receives messages from a pull subscription."""
+    # [START pubsub_subscriber_async_pull]
+    # [START pubsub_quickstart_subscriber]
+    from concurrent.futures import TimeoutError
+    from google.cloud import pubsub_v1
 
-    channel = connection.channel()
-    channel.queue_declare(queue='conversion_process', durable=True)
+    project_id = "audioconverter-366014"
+    subscription_id = "SuscriptorWorker"
+    # Number of seconds the subscriber should listen for messages
+    timeout = 5.0
 
-    def callback(ch, method, properties, body):
-        print(" [x] Received %r" % body.decode())
-        #print(body.decode())
+    subscriber = pubsub_v1.SubscriberClient()
+    # The `subscription_path` method creates a fully qualified identifier
+    # in the form `projects/{project_id}/subscriptions/{subscription_id}`
+    subscription_path = subscriber.subscription_path(project_id, subscription_id)
+
+    def callback(message: pubsub_v1.subscriber.message.Message) -> None:
+        print(f"Received {message}.")
         bodyAsJson = json.loads(body.decode())
         x = requests.post (url = "http://127.0.0.1:4000/api/convert",json = bodyAsJson)
         #print(x)
         print("Done")
+        message.ack()
 
-    channel.basic_consume(queue='conversion_process', on_message_callback=callback, auto_ack=True)
+    streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
+    print(f"Listening for messages on {subscription_path}..\n")
 
-    print(' [*] Waiting for messages. To exit press CTRL+C')
-    channel.start_consuming()
+    # Wrap subscriber in a 'with' block to automatically call close() when done.
+    with subscriber:
+        try:
+            # When `timeout` is not set, result() will block indefinitely,
+            # unless an exception is encountered first.
+            streaming_pull_future.result(timeout=timeout)
+        except TimeoutError:
+            streaming_pull_future.cancel()  # Trigger the shutdown.
+            streaming_pull_future.result()  # Block until the shutdown is complete.
+    # [END pubsub_subscriber_async_pull]
+    # [END pubsub_quickstart_subscriber]
 
 if __name__ == '__main__':
     try:

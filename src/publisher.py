@@ -35,8 +35,7 @@ def publish_messages(data_str: str) -> None:
     # [START pubsub_quickstart_publisher]
     # [START pubsub_publish]
     from google.cloud import pubsub_v1
-
-    # TODO(developer)
+    
     project_id = "audioconverter-366014"
     topic_id = "ColaConverter"
 
