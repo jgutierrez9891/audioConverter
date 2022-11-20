@@ -30,5 +30,25 @@ def publish_task_queue(mensaje):
 
     connection.close()
 
+def publish_messages(data_str: str) -> None:
+    """Publishes multiple messages to a Pub/Sub topic."""
+    # [START pubsub_quickstart_publisher]
+    # [START pubsub_publish]
+    from google.cloud import pubsub_v1
+    
+    project_id = "audioconverter-366014"
+    topic_id = "ColaConverter"
 
+    publisher = pubsub_v1.PublisherClient()
+    # The `topic_path` method creates a fully qualified identifier
+    # in the form `projects/{project_id}/topics/{topic_id}`
+    topic_path = publisher.topic_path(project_id, topic_id)
 
+    data = str(data_str).encode("utf-8")
+    # When you publish a message, the client returns a future.
+    future = publisher.publish(topic_path, data)
+    print(future.result())
+
+    print(f"Published message to {topic_path}.")
+    # [END pubsub_quickstart_publisher]
+    # [END pubsub_publish]

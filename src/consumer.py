@@ -2,28 +2,34 @@ import pika, sys, os, json
 import requests
 
 def main():
-    try:
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost',heartbeat=0))
-    except pika.exceptions.AMQPConnectionError:
-        print("Failed to connect to RabbitMQ service. Message wont be sent.")
-        return
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
+    """Receives messages from a pull subscription."""
+    from concurrent.futures import TimeoutError
+    from google.cloud import pubsub_v1
 
-    channel = connection.channel()
-    channel.queue_declare(queue='conversion_process', durable=True)
+    project_id = "audioconverter-366014"
+    subscription_id = "SuscriptorWorker"
 
-    def callback(ch, method, properties, body):
-        print(" [x] Received %r" % body.decode())
-        #print(body.decode())
-        bodyAsJson = json.loads(body.decode())
+    subscriber = pubsub_v1.SubscriberClient()
+    subscription_path = subscriber.subscription_path(project_id, subscription_id)
+
+    def callback(message: pubsub_v1.subscriber.message.Message) -> None:
+        print(f"Received {message}.")
+        print(message.data.decode("utf-8").replace("'","\""))
+        bodyAsJson = json.loads(message.data.decode("utf-8").replace("'","\""))
         x = requests.post (url = "http://127.0.0.1:4000/api/convert",json = bodyAsJson)
-        #print(x)
+        message.ack()
         print("Done")
 
-    channel.basic_consume(queue='conversion_process', on_message_callback=callback, auto_ack=True)
+    streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
+    print(f"Listening for messages on {subscription_path}..\n")
 
-    print(' [*] Waiting for messages. To exit press CTRL+C')
-    channel.start_consuming()
+    with subscriber:
+        try:
+            streaming_pull_future.result()
+        except TimeoutError:
+            streaming_pull_future.cancel()  # Trigger the shutdown.
+            streaming_pull_future.result()  # Block until the shutdown is complete.
 
 if __name__ == '__main__':
     try:
