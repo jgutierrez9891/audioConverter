@@ -45,7 +45,7 @@ def publish_messages(data_str: str) -> None:
     # in the form `projects/{project_id}/topics/{topic_id}`
     topic_path = publisher.topic_path(project_id, topic_id)
 
-    data = data_str.encode("utf-8")
+    data = str(data_str).encode("utf-8")
     # When you publish a message, the client returns a future.
     future = publisher.publish(topic_path, data)
     print(future.result())
