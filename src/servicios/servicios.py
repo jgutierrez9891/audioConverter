@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from src.publisher import publish_task_queue
+from src.publisher import publish_messages
 from pydub import AudioSegment
 from sqlalchemy.sql import text
 from google.cloud import storage
@@ -146,7 +146,7 @@ class Tasks(Resource):
 
         #Se envía tarea a la cola
         mensaje = {"filepath":str(filepath), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
-        q = publish_task_queue(mensaje)
+        q = publish_messages(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
 class TaskR(Resource):
