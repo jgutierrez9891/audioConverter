@@ -36,7 +36,8 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.
 app.config['GCP_BUCKET_NAME'] = "audioconverter-files"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    "creator": getconn
+    "creator": getconn,
+    "pool_size": 20
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
