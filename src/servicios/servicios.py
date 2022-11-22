@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 from src.utilities.utilities import allowed_file
 from flask import current_app as app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from src.publisher import publish_task_queue
+from src.publisher import publish_messages
 from pydub import AudioSegment
 from sqlalchemy.sql import text
 from google.cloud import storage
@@ -116,9 +116,7 @@ class Tasks(Resource):
         file = request.files["nombreArchivo"]
         if file.filename == '':
             return {"resultado": "ERROR", "mensaje": 'Debe seleccionar un archivo de audio para ser convertido'}, 411
-        print (file.filename)
         if file and allowed_file(file.filename):
-            print (file.filename)
             ct = datetime.now()
             currentMilliseconds = str(ct.timestamp()).replace(".","")
             
@@ -146,14 +144,13 @@ class Tasks(Resource):
 
         #Se envía tarea a la cola
         mensaje = {"filepath":str(filepath), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
-        q = publish_task_queue(mensaje)
+        q = publish_messages(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
 class TaskR(Resource):
 
     @jwt_required()
     def get(self, taskId):
-        print("userid: "+taskId)
         taskTmp = Task.query.filter(Task.id == taskId).first()
         if(taskTmp is not None):
             return {"id": taskTmp.id,
@@ -191,14 +188,10 @@ class TaskR(Resource):
     
     @jwt_required()
     def delete(self, taskId):
-        print("idTask: "+taskId)
         task = Task.query.get_or_404(taskId)
         justFileName = task.fileName.split('.')[0]
         destinationFormat = task.newFormat
-        print("justFileName: "+justFileName)
-        print("destinationFormat: "+destinationFormat)
         destinationFileName = justFileName+"."+destinationFormat
-        print("destinationFileName: "+destinationFileName)
 
         if(os.path.isfile(destinationFileName)):
             os.remove(destinationFileName)

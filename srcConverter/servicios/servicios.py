@@ -30,26 +30,6 @@ class Converter(Resource):
         print('bucket name')
         print(audio_bucket.name)
 
-        if True: #testing purposes
-            if True:
-                nuevoUsuario = User(username = "carlos", email = "ca@a.com", password="123asdqeE")
-                db.session.add(nuevoUsuario)
-                db.session.commit()
-                now = datetime.now()
-                dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
-                nueva_tarea = Task(fileName = request.json["filepath"], newFormat = request.json["newFormat"], \
-                timeStamp = dt_string, status = "uploaded", id_usuario = "1")
-                db.session.add(nueva_tarea)
-                db.session.commit()
-
-            print('storage test started')
-            blobname= 'english.pdf'
-            destiantionFilepath = os.path.join(os.getcwd(), 'file2.pdf')
-            file_downloaded = download_from_bucket(blobname, destiantionFilepath)
-            bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-            blob = bucket.blob('test3.pdf')
-            blob.upload_from_filename(destiantionFilepath)
-
         print("coverter started")
 
         now = datetime.now()
