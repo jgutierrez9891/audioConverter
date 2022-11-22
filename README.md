@@ -231,6 +231,6 @@ Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de
  15.  Crear un nuevo grupo de instancias con las siguientes configuraciones:
  		* Uso de la plantilla definida en el paso anterior
 		* Ajuste de escala automático mínimo 1 y máximo 3
-		* Métrica de autoescalado: Pub/Sub, **mensajes por VM 10**
+		* Métrica de autoescalado: Pub/Sub, **mensajes por VM 100**
 		* Periodo de inactividad: **60 segundos**
 		* Asignación de puertos: puerto **4000**
