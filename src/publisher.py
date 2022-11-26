@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import pika
 import json
+import os
 """
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost'))
@@ -10,7 +11,7 @@ channel.basic_publish(exchange='', routing_key='conversion_process', body='Hello
 print(" [x] Sent 'Hello World!'")
 connection.close()
 """
-
+"""
 def publish_task_queue(mensaje):
     try:
         connection = pika.BlockingConnection(
@@ -29,6 +30,7 @@ def publish_task_queue(mensaje):
             )
 
     connection.close()
+"""
 
 def publish_messages(data_str: str) -> None:
     """Publishes multiple messages to a Pub/Sub topic."""
@@ -37,7 +39,7 @@ def publish_messages(data_str: str) -> None:
     from google.cloud import pubsub_v1
     
     project_id = "audioconverter-366014"
-    topic_id = "ColaConverter"
+    topic_id = os.environ.get("PUBSUB_TOPIC")
 
     publisher = pubsub_v1.PublisherClient()
     # The `topic_path` method creates a fully qualified identifier

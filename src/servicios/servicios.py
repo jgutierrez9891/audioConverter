@@ -183,7 +183,7 @@ class TaskR(Resource):
         db.session.commit()
         #Se envía tarea a la cola
         mensaje = {"filepath":tarea.fileName, "newFormat":request.values['nuevoFormato'], "id": tarea.id}
-        q = publish_task_queue(mensaje)
+        q = publish_messages(mensaje)
         return {"mensaje": "Tarea actualizada exitosamente", "tarea": serialize(tarea)},200
     
     @jwt_required()
