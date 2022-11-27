@@ -21,3 +21,4 @@ env_variables:
   GOOGLE_APPLICATION_CREDENTIALS: 'audioconverter-service-key.json'
 
 service_account: audioconverteru@audioconverter-366014.iam.gserviceaccount.com
+service:  apiservice
