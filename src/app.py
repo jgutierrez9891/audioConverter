@@ -28,7 +28,7 @@ def getconn():
         return conn
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-data_folder = Path("/mnt/files")
+data_folder = Path("./audios")
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = data_folder

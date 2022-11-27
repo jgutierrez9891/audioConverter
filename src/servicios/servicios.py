@@ -117,33 +117,34 @@ class Tasks(Resource):
         if file.filename == '':
             return {"resultado": "ERROR", "mensaje": 'Debe seleccionar un archivo de audio para ser convertido'}, 411
         if file and allowed_file(file.filename):
-            ct = datetime.now()
-            currentMilliseconds = str(ct.timestamp()).replace(".","")
+            #ct = datetime.now()
+            #currentMilliseconds = str(ct.timestamp()).replace(".","")
             
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], currentMilliseconds+filename))
+            #dirname = os.path.dirname(os.path.abspath(__file__))
+            #file.save(os.path.join(dirname, "/"+currentMilliseconds+filename))
             
             storage_client = storage.Client()
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
             
-            filepath = str(app.config['UPLOAD_FOLDER'])+"/"+currentMilliseconds+filename
-            blob = audio_bucket.blob(str(filepath)[1:])
-            blob.upload_from_filename(filepath)
+            #filepath = dirname + "/" + currentMilliseconds+filename
+            blob = audio_bucket.blob(filename)
+            blob.upload_from_file(file)
 
-            os.remove(filepath)
+            #os.remove(filepath)
         else:
             print ("Formato invalido" + file.filename)
             return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
         usuario = User.query.get(id_usuario)
         if usuario is None:
             return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
-        nueva_tarea = Task(fileName = filepath, newFormat = request.values['nuevoFormato'], \
+        nueva_tarea = Task(fileName = filename, newFormat = request.values['nuevoFormato'], \
             timeStamp = dt_string, status = "uploaded", id_usuario = id_usuario)
         db.session.add(nueva_tarea)
         db.session.commit()
 
         #Se envía tarea a la cola
-        mensaje = {"filepath":str(filepath), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
+        mensaje = {"filepath":str(filename), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
         q = publish_messages(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
