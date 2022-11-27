@@ -6,8 +6,8 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from google.cloud.sql.connector import Connector, IPTypes
 
-from src.modelos.modelos import db
-from src.servicios.servicios import Auth, AuthLogin, FilesR, TaskR, Tasks, Health
+from modelos.modelos import db
+from servicios.servicios import Auth, AuthLogin, FilesR, TaskR, Tasks, Health
 
 # initialize Cloud SQL Python Connector object
 instance_connection_name = "audioconverter-366014:us-central1:vinilosappdb" # e.g. 'project:region:instance'

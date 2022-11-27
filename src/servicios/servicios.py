@@ -5,12 +5,12 @@ import traceback
 from flask import request, jsonify, send_file
 from datetime import datetime
 from flask_restful import Resource
-from src.modelos.modelos import User, db, Task
+from modelos.modelos import User, db, Task
 from werkzeug.utils import secure_filename
-from src.utilities.utilities import allowed_file
+from utilities.utilities import allowed_file
 from flask import current_app as app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from src.publisher import publish_messages
+from publisher import publish_messages
 from pydub import AudioSegment
 from sqlalchemy.sql import text
 from google.cloud import storage
