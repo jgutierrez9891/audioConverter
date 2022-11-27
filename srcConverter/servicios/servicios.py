@@ -1,4 +1,3 @@
-import io
 import traceback
 from flask import request
 from flask import current_app as app
@@ -23,13 +22,6 @@ def download_from_bucket(blob_name, file_path_destiny):
         print(e)
         return False
 
-def download_blob_from_bucket(blob_name):
-    try:
-        bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-        blob = bucket.blob(blob_name)
-        return blob
-    except Exception as e:
-        print(e)
 
 class Converter(Resource):
     def post(self):
@@ -56,10 +48,9 @@ class Converter(Resource):
         
         userTmp = User.query.filter(User.id == taskTmp.id_usuario).first()
         
-        local_filepath = request.json["filepath"]
-        bucket_filepath = local_filepath[1:]
-        file_downloaded = download_blob_from_bucket(bucket_filepath)
-        file2convert = io.BytesIO(file_downloaded)
+        local_filepath = "/tmp/"+request.json["filepath"]
+        bucket_filepath = request.json["filepath"]
+        download_from_bucket(bucket_filepath, local_filepath)
         nFormat = request.json["newFormat"]
         
         locationNoFormat = bucket_filepath.split(".")[0]
@@ -73,26 +64,27 @@ class Converter(Resource):
         print("before convert")
         postR = False
         try:
-            destinyPath = '/'+ locationNoFormat+"."+nFormat
+            destinyPath = '/tmp/'+ locationNoFormat+"."+nFormat
             if format == "mp3":
-                song = AudioSegment.from_mp3(file2convert)
-                dataIO=io.BytesIO()
-                song.export(dataIO, format=nFormat)
+                song = AudioSegment.from_mp3(local_filepath)
+                song.export(destinyPath, format=nFormat)
                 bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-                blob = bucket.blob(destinyPath[1:])
-                blob.blob.upload_from_string(dataIO)
+                blob = bucket.blob(destinyPath[6:])
+                blob.upload_from_filename(destinyPath)
                 if postR:
                     x = requests.post(url = url,auth = auth ,data = jsons)
                     print(x)
                 taskTmp.status = "processed"
                 db.session.commit()
                 print("converted to " + nFormat)
+                os.remove(local_filepath)
+                os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             elif format == "ogg":
-                song = AudioSegment.from_ogg(file2convert)
+                song = AudioSegment.from_ogg(local_filepath)
                 song.export(destinyPath, format=nFormat)
                 bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-                blob = bucket.blob(destinyPath[1:])
+                blob = bucket.blob(destinyPath[6:])
                 blob.upload_from_filename(destinyPath)
                 if postR:
                     x = requests.post(url = url,auth = auth ,data = jsons)
@@ -104,10 +96,10 @@ class Converter(Resource):
                 os.remove(destinyPath)
                 return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
             elif format == "wav":
-                song = AudioSegment.from_wav(file2convert)
+                song = AudioSegment.from_wav(local_filepath)
                 song.export(destinyPath, format=nFormat)
                 bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-                blob = bucket.blob(destinyPath[1:])
+                blob = bucket.blob(destinyPath[6:])
                 blob.upload_from_filename(destinyPath)
                 if postR:
                     x = requests.post(url = url,auth = auth ,data = jsons)
