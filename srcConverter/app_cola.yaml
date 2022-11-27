@@ -13,12 +13,12 @@
 # limitations under the License.
 
 runtime: python39
-entrypoint: gunicorn -b :$PORT consumer:app
+entrypoint: gunicorn -b :$PORT app:app
 
 env_variables:
   CLOUD_STORAGE_BUCKET: "audioconverter-files"
   PUBSUB_TOPIC: "ColaConverter"
-  GOOGLE_APPLICATION_CREDENTIALS: 'audioconverter-service-key.json'
+  GOOGLE_APPLICATION_CREDENTIALS: 'audioconverter-service-key.json' 
 
 service_account: audioconverteru@audioconverter-366014.iam.gserviceaccount.com
 service: consumerservice
