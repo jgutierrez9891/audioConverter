@@ -4,7 +4,7 @@ from flask import request
 from flask import current_app as app
 from flask_restful import Resource
 from pydub import AudioSegment
-from srcConverter.modelos.modelos import User, db, Task
+from modelos.modelos import User, db, Task
 import requests
 from datetime import datetime
 import os
