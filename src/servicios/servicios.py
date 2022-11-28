@@ -117,8 +117,8 @@ class Tasks(Resource):
         if file.filename == '':
             return {"resultado": "ERROR", "mensaje": 'Debe seleccionar un archivo de audio para ser convertido'}, 411
         if file and allowed_file(file.filename):
-            #ct = datetime.now()
-            #currentMilliseconds = str(ct.timestamp()).replace(".","")
+            ct = datetime.now()
+            currentMilliseconds = str(ct.timestamp()).replace(".","")
             
             filename = secure_filename(file.filename)
             #dirname = os.path.dirname(os.path.abspath(__file__))
@@ -128,7 +128,7 @@ class Tasks(Resource):
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
             
             #filepath = dirname + "/" + currentMilliseconds+filename
-            blob = audio_bucket.blob(filename)
+            blob = audio_bucket.blob(currentMilliseconds+filename)
             blob.upload_from_file(file)
 
             #os.remove(filepath)
