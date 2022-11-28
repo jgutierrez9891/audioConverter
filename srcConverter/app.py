@@ -43,7 +43,7 @@ def consumer():
         print(f"Received {message}.")
         print(message.data.decode("utf-8").replace("'","\""))
         bodyAsJson = json.loads(message.data.decode("utf-8").replace("'","\""))
-        x = requests.post (url = "http://127.0.0.1:8080/api/convert",json = bodyAsJson)
+        x = requests.post (url = "http://127.0.0.1:8081/api/convert",json = bodyAsJson)
         message.ack()
         print("Done")
 

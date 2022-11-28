@@ -69,7 +69,7 @@ class Converter(Resource):
                 song = AudioSegment.from_mp3(local_filepath)
                 song.export(destinyPath, format=nFormat)
                 bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-                blob = bucket.blob(destinyPath[6:])
+                blob = bucket.blob(destinyPath[5:])
                 blob.upload_from_filename(destinyPath)
                 if postR:
                     x = requests.post(url = url,auth = auth ,data = jsons)
@@ -84,7 +84,7 @@ class Converter(Resource):
                 song = AudioSegment.from_ogg(local_filepath)
                 song.export(destinyPath, format=nFormat)
                 bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-                blob = bucket.blob(destinyPath[6:])
+                blob = bucket.blob(destinyPath[5:])
                 blob.upload_from_filename(destinyPath)
                 if postR:
                     x = requests.post(url = url,auth = auth ,data = jsons)
@@ -99,7 +99,7 @@ class Converter(Resource):
                 song = AudioSegment.from_wav(local_filepath)
                 song.export(destinyPath, format=nFormat)
                 bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
-                blob = bucket.blob(destinyPath[6:])
+                blob = bucket.blob(destinyPath[5:])
                 blob.upload_from_filename(destinyPath)
                 if postR:
                     x = requests.post(url = url,auth = auth ,data = jsons)
