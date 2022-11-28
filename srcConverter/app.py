@@ -10,6 +10,8 @@ import os
 
 from google.cloud.sql.connector import Connector, IPTypes
 
+from srcConverter.servicios.servicios import MessageListener
+
 # initialize Cloud SQL Python Connector object
 instance_connection_name = "audioconverter-366014:us-central1:vinilosappdb" # e.g. 'project:region:instance'
 db_user = "audioconverteru@audioconverter-366014.iam"  # e.g. 'my-db-user'
@@ -59,9 +61,7 @@ def consumer():
 
 
 app = Flask(__name__)
-t = Thread(target=consumer)
-t.daemon = True
-t.start()
+
 
 app.config['EMAIL_API_KEY'] = os.environ['EMAIL_API_KEY']
 app.config['GCP_BUCKET_NAME'] = "audioconverter-files"
@@ -72,6 +72,8 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_SECRET_KEY'] = 'm723984iefwkjp09480kdjsdhsd7nenkjcsd'
+app.config['PUBSUB_VERIFICATION_TOKEN'] = os.environ['PUBSUB_VERIFICATION_TOKEN']
+app.config['PUBSUB_TOPIC'] = os.environ['PUBSUB_TOPIC']
 
 app_context = app.app_context()
 app_context.push()
@@ -80,6 +82,7 @@ db.init_app(app)
 
 api = Api(app)
 api.add_resource(Converter, '/api/convert')
+api.add_resource(MessageListener, '/api/listeMessage')
 
 jwt = JWTManager(app)
 

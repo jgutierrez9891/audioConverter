@@ -1,3 +1,5 @@
+import base64
+import json
 import traceback
 from flask import request
 from flask import current_app as app
@@ -121,3 +123,18 @@ class Converter(Resource):
             db.session.commit()
             os.remove(local_filepath)
             return {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
+
+
+class MessageListener(Resource):
+    def post(self):
+        if (request.args.get('token', '') != app.config['PUBSUB_VERIFICATION_TOKEN']):
+            return 'Invalid request', 400
+        
+        envelope = json.loads(request.data.decode('utf-8'))
+        payload = base64.b64decode(envelope['message']['data'])
+
+        bodyAsJson = json.loads(payload)
+        requests.post (url = "http://127.0.0.1:8081/api/convert",json = bodyAsJson)
+        print("Done")
+
+        return 'OK', 200

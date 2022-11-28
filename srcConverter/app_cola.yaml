@@ -21,6 +21,7 @@ env_variables:
   PUBSUB_TOPIC: "ColaConverter"
   GOOGLE_APPLICATION_CREDENTIALS: 'audioconverter-service-key.json' 
   EMAIL_API_KEY: ""
+  PUBSUB_VERIFICATION_TOKEN: "lkjflksjf9i2394832k"
 
 service_account: audioconverteru@audioconverter-366014.iam.gserviceaccount.com
 service: consumerservice
