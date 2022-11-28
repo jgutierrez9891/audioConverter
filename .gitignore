@@ -145,3 +145,6 @@ cython_debug/
 
 #DataBase
 test.db
+
+##GCP account key json
+*service-key.json
