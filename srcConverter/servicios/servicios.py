@@ -128,8 +128,10 @@ class MessageListener(Resource):
         if (request.args.get('token', '') != app.config['PUBSUB_VERIFICATION_TOKEN']):
             return 'Invalid request', 400
         
+        bodyAsJson = json.loads(request.data.decode("utf-8").replace("'","\""))
         envelope = json.loads(request.data.decode('utf-8'))
         payload = base64.b64decode(envelope['message']['data'])
+        message = str(payload).replace("'","\"")
+        print("message: "+message)
 
-        bodyAsJson = json.loads(payload)
-        return convert(bodyAsJson)
+        return convert(json.loads(message))
