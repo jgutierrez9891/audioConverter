@@ -133,5 +133,7 @@ class MessageListener(Resource):
         payload = base64.b64decode(envelope['message']['data'])
         message = str(payload).replace("'","\"")
         print("message: "+message)
+        objectToConvert = json.loads(message)
+        print("objectToConvert: "+str(objectToConvert))
 
-        return convert(json.loads(message))
+        return convert(objectToConvert)
