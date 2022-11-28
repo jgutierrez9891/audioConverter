@@ -125,6 +125,9 @@ def convert(request):
 
 class MessageListener(Resource):
     def post(self):
+        if (request.args.get('token', '') != app.config['PUBSUB_VERIFICATION_TOKEN']):
+            return 'Invalid request', 400
+        
         envelope = json.loads(request.data.decode('utf-8'))
         payload = base64.b64decode(envelope['message']['data'])
 
