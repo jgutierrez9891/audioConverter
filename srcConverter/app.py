@@ -31,7 +31,8 @@ app.config['EMAIL_API_KEY'] = os.environ['EMAIL_API_KEY']
 app.config['GCP_BUCKET_NAME'] = "audioconverter-files"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    "creator": getconn
+    "creator": getconn,
+    "pool_size": 30
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
