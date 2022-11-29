@@ -21,7 +21,6 @@ def getconn():
             db=db_name,
             enable_iam_auth=True,
             ip_type=ip_type,
-            pool_size=30
         )
         return conn
 

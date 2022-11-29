@@ -14,7 +14,7 @@
 
 runtime: python39
 entrypoint: gunicorn -b :$PORT -w 8 app:app
-instance_class: F4_1G
+instance_class: B4_1G
 
 env_variables:
   CLOUD_STORAGE_BUCKET: "audioconverter-files"
