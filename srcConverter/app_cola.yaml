@@ -25,3 +25,6 @@ env_variables:
 
 service_account: audioconverteru@audioconverter-366014.iam.gserviceaccount.com
 service: consumerservice
+
+basic_scaling:
+  max_instances: 11
