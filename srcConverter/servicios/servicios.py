@@ -134,6 +134,9 @@ class MessageListener(Resource):
         objectToConvert = json.loads(message)
         print("objectToConvert: "+str(objectToConvert))
 
-        respuesta = convert(objectToConvert)
-        return {"mensaje": str(respuesta)}, 200
-        
+        try:
+            respuesta = convert(objectToConvert)
+            return {"mensaje": str(respuesta)}, 200
+        except Exception:
+            print("Exception: "+traceback.print_exc())
+            return {"error": traceback.print_exc()}, 500
