@@ -116,9 +116,11 @@ def convert(request):
     except Exception:
         print("error in conversion !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         print(traceback.print_exc())
-        taskTmp = Task.query.filter(Task.id == int(request.get("id"))).first()
+        taskTmp.status = "error"
         db.session.commit()
-        os.remove(local_filepath)
+        isExist= os.path.exists(local_filepath)
+        if(isExist):
+            os.remove(local_filepath)
         return {"code":400, "resultado": "ERROR", "mensaje": traceback.print_exc()}
 
 class MessageListener(Resource):
@@ -126,7 +128,6 @@ class MessageListener(Resource):
         if (request.args.get('token', '') != app.config['PUBSUB_VERIFICATION_TOKEN']):
             return 'Invalid request', 400
 
-        bodyAsJson = json.loads(request.data.decode("utf-8").replace("'","\""))
         envelope = json.loads(request.data.decode('utf-8'))
         payload = base64.b64decode(envelope['message']['data']).decode('utf-8')
         message = payload.replace("'","\"")

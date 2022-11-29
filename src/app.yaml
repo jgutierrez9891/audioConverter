@@ -25,4 +25,5 @@ service_account: audioconverteru@audioconverter-366014.iam.gserviceaccount.com
 service:  apiservice
 
 basic_scaling:
+  min_instances: 4
   max_instances: 11
