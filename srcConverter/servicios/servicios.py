@@ -138,5 +138,5 @@ class MessageListener(Resource):
             respuesta = convert(objectToConvert)
             return {"mensaje": str(respuesta)}, 200
         except Exception:
-            print("Exception: "+traceback.print_exc())
-            return {"error": traceback.print_exc()}, 500
+            print("Exception: "+str(traceback.print_exc()))
+            return {"error": str(traceback.print_exc())}, 528
