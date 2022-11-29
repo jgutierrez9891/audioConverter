@@ -78,7 +78,7 @@ def convert(request):
             print("converted to " + nFormat)
             os.remove(local_filepath)
             os.remove(destinyPath)
-            return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
+            return {"code": 200, "mensaje": "Se Realizo la conversion exitosamente"}
         elif format == "ogg":
             song = AudioSegment.from_ogg(local_filepath)
             song.export(destinyPath, format=nFormat)
@@ -93,7 +93,7 @@ def convert(request):
             print("converted to " + nFormat)
             os.remove(local_filepath)
             os.remove(destinyPath)
-            return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
+            return {"code": 200, "mensaje": "Se Realizo la conversion exitosamente"}
         elif format == "wav":
             song = AudioSegment.from_wav(local_filepath)
             song.export(destinyPath, format=nFormat)
@@ -108,18 +108,18 @@ def convert(request):
             print("converted to " + nFormat)
             os.remove(local_filepath)
             os.remove(destinyPath)
-            return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
+            return {"code": 200, "mensaje": "Se Realizo la conversion exitosamente"}
         else:
             print("incorrect format return")
             os.remove(local_filepath)
-            return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400
+            return {"code":400, "resultado": "ERROR", "mensaje": "El formato no se reconoce"}
     except Exception:
         print("error in conversion !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         print(traceback.print_exc())
         taskTmp = Task.query.filter(Task.id == int(request.get("id"))).first()
         db.session.commit()
         os.remove(local_filepath)
-        return {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
+        return {"code":400, "resultado": "ERROR", "mensaje": traceback.print_exc()}
 
 class MessageListener(Resource):
     def post(self):
@@ -134,5 +134,6 @@ class MessageListener(Resource):
         objectToConvert = json.loads(message)
         print("objectToConvert: "+str(objectToConvert))
 
-        return convert(objectToConvert)
+        respuesta = convert(objectToConvert)
+        return {"mensaje": str(respuesta)}, 200
         
