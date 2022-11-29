@@ -78,7 +78,7 @@ def convert(request):
             print("converted to " + nFormat)
             os.remove(local_filepath)
             os.remove(destinyPath)
-            return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
+            return {"code": 200, "mensaje": "Se Realizo la conversion exitosamente"}
         elif format == "ogg":
             song = AudioSegment.from_ogg(local_filepath)
             song.export(destinyPath, format=nFormat)
@@ -93,7 +93,7 @@ def convert(request):
             print("converted to " + nFormat)
             os.remove(local_filepath)
             os.remove(destinyPath)
-            return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
+            return {"code": 200, "mensaje": "Se Realizo la conversion exitosamente"}
         elif format == "wav":
             song = AudioSegment.from_wav(local_filepath)
             song.export(destinyPath, format=nFormat)
@@ -108,25 +108,26 @@ def convert(request):
             print("converted to " + nFormat)
             os.remove(local_filepath)
             os.remove(destinyPath)
-            return {"mensaje": "Se Realizo la conversion exitosamente"}, 200
+            return {"code": 200, "mensaje": "Se Realizo la conversion exitosamente"}
         else:
             print("incorrect format return")
             os.remove(local_filepath)
-            return {"resultado": "ERROR", "mensaje": "El formato no se reconoce"}, 400
+            return {"code":400, "resultado": "ERROR", "mensaje": "El formato no se reconoce"}
     except Exception:
         print("error in conversion !!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         print(traceback.print_exc())
-        taskTmp = Task.query.filter(Task.id == int(request.get("id"))).first()
+        taskTmp.status = "error"
         db.session.commit()
-        os.remove(local_filepath)
-        return {"resultado": "ERROR", "mensaje": traceback.print_exc()}, 400
+        isExist= os.path.exists(local_filepath)
+        if(isExist):
+            os.remove(local_filepath)
+        return {"code":400, "resultado": "ERROR", "mensaje": traceback.print_exc()}
 
 class MessageListener(Resource):
     def post(self):
         if (request.args.get('token', '') != app.config['PUBSUB_VERIFICATION_TOKEN']):
             return 'Invalid request', 400
 
-        bodyAsJson = json.loads(request.data.decode("utf-8").replace("'","\""))
         envelope = json.loads(request.data.decode('utf-8'))
         payload = base64.b64decode(envelope['message']['data']).decode('utf-8')
         message = payload.replace("'","\"")
@@ -134,5 +135,9 @@ class MessageListener(Resource):
         objectToConvert = json.loads(message)
         print("objectToConvert: "+str(objectToConvert))
 
-        return convert(objectToConvert)
-        
+        try:
+            respuesta = convert(objectToConvert)
+            return {"mensaje": str(respuesta)}, 200
+        except Exception:
+            print("Exception: "+str(traceback.print_exc()))
+            return {"error": str(traceback.print_exc())}, 528
