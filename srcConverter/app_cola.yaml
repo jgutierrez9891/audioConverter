@@ -14,7 +14,7 @@
 
 runtime: python39
 entrypoint: gunicorn -b :$PORT -w 8 app:app
-instance_class: B4_1G
+instance_class: F4_1G
 
 env_variables:
   CLOUD_STORAGE_BUCKET: "audioconverter-files"
@@ -26,6 +26,10 @@ env_variables:
 service_account: audioconverteru@audioconverter-366014.iam.gserviceaccount.com
 service: consumerservice
 
-basic_scaling:
+automatic_scaling:
+  target_cpu_utilization: 0.65
   min_instances: 4
-  max_instances: 11
+  max_instances: 10
+  min_pending_latency: 30ms
+  max_pending_latency: automatic
+  max_concurrent_requests: 50
