@@ -1,10 +1,9 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-from srcConverter.servicios.servicios import Converter
-from srcConverter.modelos.modelos import db
+from servicios.servicios import MessageListener
+from modelos.modelos import db
 import os
-
 from google.cloud.sql.connector import Connector, IPTypes
 
 # initialize Cloud SQL Python Connector object
@@ -25,22 +24,21 @@ def getconn():
         )
         return conn
 
-#Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-UPLOAD_FOLDER = '/mnt/files'
-
-
 app = Flask(__name__)
-app.config['EMAIL_API_KEY'] = ""
+
+
+app.config['EMAIL_API_KEY'] = os.environ['EMAIL_API_KEY']
 app.config['GCP_BUCKET_NAME'] = "audioconverter-files"
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    "creator": getconn
+    "creator": getconn,
+    "pool_size": 30
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_SECRET_KEY'] = 'm723984iefwkjp09480kdjsdhsd7nenkjcsd'
+app.config['PUBSUB_VERIFICATION_TOKEN'] = os.environ['PUBSUB_VERIFICATION_TOKEN']
+app.config['PUBSUB_TOPIC'] = os.environ['PUBSUB_TOPIC']
 
 app_context = app.app_context()
 app_context.push()
@@ -48,6 +46,12 @@ app_context.push()
 db.init_app(app)
 
 api = Api(app)
-api.add_resource(Converter, '/api/convert')
+api.add_resource(MessageListener, '/api/listenerMessage')
 
 jwt = JWTManager(app)
+
+if __name__ == '__main__':
+    # This is used when running locally only. When deploying to Google App
+    # Engine, a webserver process such as Gunicorn will serve the app. You
+    # can configure startup instructions by adding `entrypoint` to app.yaml.
+    app.run(host='127.0.0.1', port=8080, debug=True)

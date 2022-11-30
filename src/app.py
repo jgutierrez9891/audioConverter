@@ -6,8 +6,8 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from google.cloud.sql.connector import Connector, IPTypes
 
-from src.modelos.modelos import db
-from src.servicios.servicios import Auth, AuthLogin, FilesR, TaskR, Tasks, Health
+from modelos.modelos import db
+from servicios.servicios import Auth, AuthLogin, FilesR, TaskR, Tasks, Health
 
 # initialize Cloud SQL Python Connector object
 instance_connection_name = "audioconverter-366014:us-central1:vinilosappdb" # e.g. 'project:region:instance'
@@ -28,11 +28,11 @@ def getconn():
         return conn
 
 #Ruta donde se almacenan los archivos en enviados por el usuario (cambiar según ruta del OS por definir)
-data_folder = Path("/mnt/files")
+data_folder = Path("./audios")
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = data_folder
-os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS']= '../../audioconverter-service-key.json'
 app.config['GCP_BUCKET_NAME'] = "audioconverter-files"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -58,3 +58,9 @@ api.add_resource(FilesR, '/api/files/<filename>')
 api.add_resource(Health, '/api/health')
 
 jwt = JWTManager(app)
+
+if __name__ == '__main__':
+    # This is used when running locally only. When deploying to Google App
+    # Engine, a webserver process such as Gunicorn will serve the app. You
+    # can configure startup instructions by adding `entrypoint` to app.yaml.
+    app.run(host='127.0.0.1', port=8080, debug=True)

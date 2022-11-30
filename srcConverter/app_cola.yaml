@@ -1,0 +1,35 @@
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+runtime: python39
+entrypoint: gunicorn -b :$PORT -w 8 app:app
+instance_class: F4_1G
+
+env_variables:
+  CLOUD_STORAGE_BUCKET: "audioconverter-files"
+  PUBSUB_TOPIC: "ColaConverter"
+  GOOGLE_APPLICATION_CREDENTIALS: 'audioconverter-service-key.json' 
+  EMAIL_API_KEY: ""
+  PUBSUB_VERIFICATION_TOKEN: "lkjflksjf9i2394832k"
+
+service_account: audioconverteru@audioconverter-366014.iam.gserviceaccount.com
+service: consumerservice
+
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 4
+  max_instances: 10
+  min_pending_latency: 30ms
+  max_pending_latency: automatic
+  max_concurrent_requests: 50

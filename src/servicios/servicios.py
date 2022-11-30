@@ -5,12 +5,12 @@ import traceback
 from flask import request, jsonify, send_file
 from datetime import datetime
 from flask_restful import Resource
-from src.modelos.modelos import User, db, Task
+from modelos.modelos import User, db, Task
 from werkzeug.utils import secure_filename
-from src.utilities.utilities import allowed_file
+from utilities.utilities import allowed_file
 from flask import current_app as app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from src.publisher import publish_messages
+from publisher import publish_messages
 from pydub import AudioSegment
 from sqlalchemy.sql import text
 from google.cloud import storage
@@ -121,29 +121,30 @@ class Tasks(Resource):
             currentMilliseconds = str(ct.timestamp()).replace(".","")
             
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], currentMilliseconds+filename))
+            #dirname = os.path.dirname(os.path.abspath(__file__))
+            #file.save(os.path.join(dirname, "/"+currentMilliseconds+filename))
             
             storage_client = storage.Client()
             audio_bucket = storage_client.get_bucket(app.config['GCP_BUCKET_NAME'])
             
-            filepath = str(app.config['UPLOAD_FOLDER'])+"/"+currentMilliseconds+filename
-            blob = audio_bucket.blob(str(filepath)[1:])
-            blob.upload_from_filename(filepath)
+            #filepath = dirname + "/" + currentMilliseconds+filename
+            blob = audio_bucket.blob(currentMilliseconds+filename)
+            blob.upload_from_file(file)
 
-            os.remove(filepath)
+            #os.remove(filepath)
         else:
             print ("Formato invalido" + file.filename)
             return {"resultado": "ERROR", "mensaje": 'Ingrese un formato de archivo válido'}, 412
         usuario = User.query.get(id_usuario)
         if usuario is None:
             return {"resultado": "ERROR", "mensaje": 'El id de usuario ingresado no existe'}, 409
-        nueva_tarea = Task(fileName = filepath, newFormat = request.values['nuevoFormato'], \
+        nueva_tarea = Task(fileName = currentMilliseconds+filename, newFormat = request.values['nuevoFormato'], \
             timeStamp = dt_string, status = "uploaded", id_usuario = id_usuario)
         db.session.add(nueva_tarea)
         db.session.commit()
 
         #Se envía tarea a la cola
-        mensaje = {"filepath":str(filepath), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
+        mensaje = {"filepath":str(currentMilliseconds+filename), "newFormat":request.values['nuevoFormato'], "id": nueva_tarea.id}
         q = publish_messages(mensaje)
         return {"mensaje": "Tarea creada exitosamente", "id": nueva_tarea.id}
     
@@ -183,7 +184,7 @@ class TaskR(Resource):
         db.session.commit()
         #Se envía tarea a la cola
         mensaje = {"filepath":tarea.fileName, "newFormat":request.values['nuevoFormato'], "id": tarea.id}
-        q = publish_task_queue(mensaje)
+        q = publish_messages(mensaje)
         return {"mensaje": "Tarea actualizada exitosamente", "tarea": serialize(tarea)},200
     
     @jwt_required()
