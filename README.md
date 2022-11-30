@@ -234,3 +234,61 @@ Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de
 		* Métrica de autoescalado: Pub/Sub, **mensajes por VM 100**
 		* Periodo de inactividad: **60 segundos**
 		* Asignación de puertos: puerto **4000**
+
+
+## Iteración 4: Aplicaciones desplegadas en GCP APP Engine
+
+[Release](https://github.com/jgutierrez9891/audioConverter/releases/tag/v1.4.0)
+
+### Prerequisitos Cloud
+Se deben cumplir los siguientes prerequisitos para el correcto funcionamiento de la solución:
+1. Base de datos **Postgres** con un esquema llamado ***flask_db***, ejecutando en una instancia de base de datos del servicio cloud de SQL de GCP.
+2. Bucket en **Cloud Storage** con carpeta y ruta para guardar tanto los archivos de subida como los archivos para descarga tanto originales como convertidos
+3. Crear un tema de **Cloud Pub/Sub** 
+4. Suscriptor al tema existente de **Cloud Pub/Sub** con tipo de envío **Envio** 
+5. Tener una cuenta de servicio **MailGun** con un dominio configurado
+
+### Pasos para la instalación Cloud
+Crear y desplegar una nueva aplicación de **App Engine**
+ 1. Acceda a **GCP Cloud Shell** 
+ 2. Configure una variable de entorno para su PROJECT_ID. Para ello, reemplace [YOUR_PROJECT_ID] por su propio ID del proyecto
+>export PROJECT_ID=[YOUR_PROJECT_ID]
+ 3. Defina el proyecto con el comando
+>gcloud config set project ${PROJECT_ID}
+ 4. Cree una cuenta de servicio para acceder a las API de Google Cloud
+>gcloud iam service-accounts create converter --display-name "Converter Service Account"
+ 5. Otorgue los permisos adecuados a su nueva cuenta de servicio
+>gcloud projects add-iam-policy-binding $ {PROJECT_ID} --member serviceAccount:codelab@${PROJECT_ID}.iam.gserviceaccount.com --role roles/owner
+ 6. Después de crear su cuenta de servicio, cree una clave para ella
+>gcloud iam service-accounts keys create ~/key.json \
+--iam-account codelab@${PROJECT_ID}.iam.gserviceaccount.com
+
+Este comando genera una clave de cuenta de servicio que se almacena en un archivo JSON llamado key.json en su directorio principal
+
+ 7. Descargue el repositorio usando 
+>git clone https://github.com/jgutierrez9891/audioConverter.git
+ 8. Ubíquese a la carpeta del directorio en ambas máquinas. En una terminal ejecute:
+>cd audioConverter
+ 9.  Edite el archivo en la ruta **src/app.yaml** para actualizar los valores correspondientes a las variables:
+    	* CLOUD_STORAGE_BUCKET:[BUCKET_NAME] - Nombre del bucket creado como prerequisito
+    	* PUBSUB_TOPIC:[TOPIC_NAME] - Nombre del tema de Pub/Sub creado como prerequisito
+    	* GOOGLE_APPLICATION_CREDENTIALS: [CREDENTIALS_JSON_FILE] - Nombre del archivo json de credenciales creado en el paso 6
+    	* service_account: [ID_SERVICE_ACCOUNT] - Identificador de la cuenta de servicio creada en el paso 4
+ 10. Copie el archivo de credenciales creado en el paso 6 en el directorio src
+>cp /home/[USER]/[CREDENTIALS_JSON_FILE] src/
+ 11. Edite el archivo en la ruta **srcConverter/app_cola.yaml** para actualizar los valores correspondientes a las variables:
+    	* CLOUD_STORAGE_BUCKET:[BUCKET_NAME] - Nombre del bucket creado como prerequisito
+    	* PUBSUB_TOPIC:[TOPIC_NAME] - Nombre del tema de Pub/Sub creado como prerequisito
+    	* GOOGLE_APPLICATION_CREDENTIALS: [CREDENTIALS_JSON_FILE] - Nombre del archivo json de credenciales creado en el paso 6
+    	* service_account: [ID_SERVICE_ACCOUNT] - Identificador de la cuenta de servicio creada en el paso 4
+    	* EMAIL_API_KEY: [API_KEY_MAIL_GUN] - API key del servicio de correo de mailgun
+    	* PUBSUB_VERIFICATION_TOKEN: [SOME_STRING] - Cadena aleatoria para comprobar los mensajes recibidos desde Pub/Sub
+ 12. Copie el archivo de credenciales creado en el paso 6 en el directorio srcConverter
+>cp /home/[USER]/[CREDENTIALS_JSON_FILE] srcConverter/
+ 13. Cree la aplicación de **App Engine**
+>gcloud app create
+ 14. Despliegue los servicios de la app
+>gcloud app deploy src/app.yaml srcConverter/app_cola.yaml
+ 15. Una vez finalizado el proceso de despliegue, revise en la consola de GCP en el servicio App Engine los servicios y versiones creadas
+ 16. Copie la URL generada para la aplicación de **APP Engine**
+ 17. Actualice la configuración de la suscripción de Pub/Sub para definer la **Enviar URL de extremo** como **urlBaseAppEngine:8081/api/listenerMessage?token=[PUBSUB_VERIFICATION_TOKEN]** reemplanzando [PUBSUB_VERIFICATION_TOKEN] con el valor definido en el archivo **srcConverter/app_cola.yaml**
